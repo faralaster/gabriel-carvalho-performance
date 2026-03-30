@@ -44,11 +44,11 @@
 
     <main class="flex-grow flex items-center justify-center p-4 relative z-10 text-white">
         
-        <!-- HERO SECTION -->
+        <!-- HERO -->
         <section id="hero" class="max-w-4xl text-center step-enter">
-            <h1 class="hero-title text-5xl md:text-8xl mb-10 uppercase">SUA MELHOR <br> <span class="accent-gold italic">PERFORMANCE</span> <br> COMEÇA AQUI.</h1>
+            <h1 class="hero-title text-6xl md:text-8xl mb-10 uppercase">SUA MELHOR <br> <span class="accent-gold italic">PERFORMANCE</span> <br> COMEÇA AQUI.</h1>
             <div class="max-w-3xl mx-auto mb-10 md:mb-12 px-2 md:px-4 space-y-6 text-center text-zinc-100 italic">
-                <p class="text-base md:text-xl font-medium leading-relaxed">A partir de agora, serei seu braço direito nessa jornada. Vamos construir juntos o caminho para o seu objetivo físico ideal.</p>
+                <p class="text-base md:text-xl font-medium leading-relaxed">Serei seu braço direito nessa jornada. Vamos construir juntos o caminho para o seu objetivo físico ideal.</p>
             </div>
             
             <div class="flex flex-col md:flex-row gap-4 justify-center">
@@ -90,7 +90,7 @@
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12 px-2">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12 px-2 text-white">
                 <div class="glass p-5 rounded-3xl flex flex-col">
                     <label class="text-[9px] text-zinc-500 uppercase font-bold tracking-widest block mb-2">WhatsApp Destino</label>
                     <div class="flex gap-2 mb-3">
@@ -115,7 +115,8 @@
             </div>
 
             <div class="flex gap-4 mb-6 px-2 border-b border-zinc-800">
-                <button onclick="filterAdmin('concluido')" id="tab-concluido" class="tab-btn active pb-3 text-[10px] font-bold uppercase tracking-widest transition">Concluídos</button>
+                <button onclick="filterAdmin('completo')" id="tab-completo" class="tab-btn active pb-3 text-[10px] font-bold uppercase tracking-widest transition">Concluídos</button>
+                <button onclick="filterAdmin('whatsapp_concluido')" id="tab-whatsapp_concluido" class="tab-btn pb-3 text-[10px] font-bold uppercase tracking-widest transition">Contato Capturado</button>
                 <button onclick="filterAdmin('iniciado')" id="tab-iniciado" class="tab-btn pb-3 text-[10px] font-bold uppercase tracking-widest transition">Abandono</button>
             </div>
 
@@ -147,8 +148,9 @@
     <footer class="p-8 text-center text-zinc-800 text-[9px] uppercase tracking-[0.5em] font-bold mt-auto relative z-20">&copy; 2026 GABRIEL CARVALHO PERFORMANCE</footer>
 
     <script>
-        // --- 1. CONFIGURAÇÃO E INICIALIZAÇÃO ---
+        // --- 1. INICIALIZAÇÃO EMAILJS ---
         emailjs.init("1eQH1CzOnESPJ-ahi"); 
+
         const SB_URL = 'https://pogbghoozvcggoflaxcc.supabase.co';
         const SB_KEY = 'sb_publishable_vzlORYE1Zt2n8h6r8p68tQ_Rr_jW9ku';
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -157,7 +159,7 @@
         let recordId = null;
         let answers = { status: 'iniciado' };
         let currentLeadId = null;
-        let adminFilter = 'concluido';
+        let adminFilter = 'completo';
 
         const questions = [
             { id: 'nome', label: 'SEU NOME COMPLETO?', type: 'text', error: 'Digite seu nome completo.' },
@@ -238,33 +240,37 @@
 
         function applyInputLogic(el, maskType) {
             if (!maskType) return;
-            let val = el.value; let start = el.selectionStart;
-            let digitsBefore = val.slice(0, start).replace(/\D/g, '').length;
+            let value = el.value; let start = el.selectionStart;
+            let digitsBeforeCursor = value.slice(0, start).replace(/\D/g, '').length;
             if (maskType === 'phone') {
-                let clean = val.replace(/\D/g, '').slice(0, 11);
+                let clean = value.replace(/\D/g, '').slice(0, 11);
                 let fmt = ""; if (clean.length > 0) { fmt = "(" + clean.slice(0, 2); if (clean.length > 2) fmt += ") " + clean.slice(2, 7); if (clean.length > 7) fmt += "-" + clean.slice(7, 11); }
                 el.value = fmt;
             } else if (maskType === 'date_br') {
-                let clean = val.replace(/\D/g, '').slice(0, 8);
+                let clean = value.replace(/\D/g, '').slice(0, 8);
                 let fmt = "";
                 if (clean.length > 0) { fmt = clean.slice(0, 2); if (clean.length > 2) fmt += "/" + clean.slice(2, 4); if (clean.length > 4) fmt += "/" + clean.slice(4, 8); }
                 el.value = fmt;
             } else if (maskType === 'height') {
-                let clean = val.replace(/\D/g, '').slice(0, 3);
-                el.value = clean.length > 1 ? clean.charAt(0) + ',' + clean.slice(1) : clean;
+                let cleanValue = value.replace(/\D/g, '').slice(0, 3);
+                let formatted = "";
+                if (cleanValue.length > 1) formatted = cleanValue.charAt(0) + ',' + cleanValue.slice(1);
+                else formatted = cleanValue;
+                el.value = formatted;
             } else if (maskType === 'weight') {
-                let clean = val.replace(/\D/g, '').slice(0, 4).padStart(4, '0');
+                let clean = value.replace(/\D/g, '').slice(0, 4).padStart(4, '0');
                 el.value = parseInt(clean.slice(0, 3), 10).toString() + ',' + clean.slice(3);
             }
             if (['phone', 'height', 'date_br'].includes(maskType)) {
                 let newPos = 0, found = 0;
-                for (let i = 0; i < el.value.length; i++) { if (/\d/.test(el.value[i])) found++; newPos = i + 1; if (found >= digitsBefore) break; }
+                for (let i = 0; i < el.value.length; i++) { if (/\d/.test(el.value[i])) found++; newPos = i + 1; if (found >= digitsBeforeCursor) break; }
                 el.setSelectionRange(newPos, newPos);
             }
         }
 
         function autoExpand(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
 
+        // --- FLUXO ---
         function handleToggle(id, choice) {
             if (choice === 'NÃO') {
                 answers[id] = 'NÃO';
@@ -303,11 +309,29 @@
 
         function showError(msg) { const err = document.getElementById('error-msg'); err.innerText = msg; err.classList.remove('hidden'); const container = document.getElementById('quiz-container'); container.classList.remove('animate-shake'); void container.offsetWidth; container.classList.add('animate-shake'); }
 
+        // --- MODIFICADO: SYNC COM LÓGICA DE STATUS E TIMESTAMP ---
         async function sync() {
             const payload = { ...answers };
             if (payload.data_nasc && payload.data_nasc.includes('/')) { const [d, m, y] = payload.data_nasc.split('/'); payload.data_nasc = `${y}-${m}-${d}`; }
+
+            // --- INÍCIO DA LÓGICA DE STATUS ---
+            let currentStatus = 'iniciado';
+            if (answers.whatsapp && answers.email) {
+                currentStatus = 'whatsapp_concluido';
+            }
+            if (answers.atividade_favorita) { 
+                currentStatus = 'completo';
+            }
+
+            payload.status = currentStatus;
+            payload.updated_at = new Date().toISOString();
+            // --- FIM DA LÓGICA DE STATUS ---
+
             try {
-                if (!recordId) { const { data, error } = await _supabase.from('anamneses').insert([payload]).select(); if (data) { recordId = data[0].id; localStorage.setItem('anamnese_record_id', recordId); } }
+                if (!recordId) { 
+                    const { data, error } = await _supabase.from('anamneses').insert([payload]).select(); 
+                    if (data) { recordId = data[0].id; localStorage.setItem('anamnese_record_id', recordId); } 
+                }
                 else await _supabase.from('anamneses').update(payload).eq('id', recordId);
             } catch (e) { console.error("Sync error:", e.message); }
         }
@@ -315,12 +339,11 @@
         function prevStep() { if (currentStep > 0) { currentStep--; renderStep(); savePersistence(); } }
         function updateUI() { document.getElementById('progress-bar').style.width = ((currentStep + 1) / questions.length * 100) + '%'; document.getElementById('prev-btn').style.opacity = currentStep === 0 ? '0' : '1'; }
 
-        // --- 4. FINALIZAÇÃO E ENVIO ---
+        // --- FINALIZAÇÃO E ENVIO ---
         async function finishQuiz() {
-            const btn = document.getElementById('next-btn'); btn.innerHTML = `ENVIANDO... <span class="animate-spin text-lg">◌</span>`; btn.disabled = true;
-            answers.status = 'concluido'; await sync();
+            const btn = document.getElementById('next-btn'); btn.innerHTML = `ENVIANDO...`; btn.disabled = true;
+            answers.status = 'completo'; await sync();
 
-            // Busca configurações para garantir os destinos corretos
             const { data: configs } = await _supabase.from('configuracoes').select('*');
             let waDest = "5512996702937", mailDest = "seu-email@exemplo.com";
             if (configs) configs.forEach(c => { if (c.chave === 'whatsapp_destino') waDest = c.valor.replace(/\D/g, ''); if (c.chave === 'email_destino') mailDest = c.valor; });
@@ -328,16 +351,14 @@
             const formatDateBr = (s) => s.includes('-') ? s.split('-').reverse().join('/') : s;
             const formatToggle = (v) => (!v || v === "NÃO") ? "NÃO" : `SIM | *Detalhes:* ${v}`;
 
-            let messageBody = `Olá Gabriel! 👋 Acabei de preencher minha ANAMNESE no seu site.%0A--------------------------%0A%0A👤 *DADOS PESSOAIS*%0A*Nome:* ${answers.nome}%0A*Data Nasc:* ${formatDateBr(answers.data_nasc)}%0A*WhatsApp:* ${answers.whatsapp}%0A*Email:* ${answers.email}%0A*Altura:* ${answers.altura} m%0A*Peso:* ${answers.peso} kg%0A%0A🏥 *SAÚDE*%0A*Condição:* ${formatToggle(answers.condicao_saude)}%0A*Remédios:* ${formatToggle(answers.remedios)}%0A*Lesões:* ${formatToggle(answers.lesoes)}%0A*Sono:* ${answers.sono}%0A*Fuma:* ${answers.fuma}%0A*Nutrição:* ${formatToggle(answers.nutricao)}%0A%0A🎯 *OBJETIVOS*%0A*Atividade:* ${formatToggle(answers.atividade_fisica)}%0A*Disponibilidade:* ${answers.disponibilidade}%0A*Objetivo:* ${answers.objetivo}`;
+            let messageBody = `Olá Gabriel! 👋 Acabei de preencher minha ANAMNESE no seu site.%0A--------------------------%0A%0A👤 *DADOS PESSOAIS*%0A*Nome:* ${answers.nome}%0A*Data Nasc:* ${formatDateBr(answers.data_nasc)}%0A*WhatsApp:* ${answers.whatsapp}%0A*Email:* ${answers.email}%0A*Altura:* ${answers.altura} m%0A*Peso:* ${answers.peso} kg%0A%0A🏥 *SAÚDE*%0A*Condição:* ${formatToggle(answers.condicao_saude)}%0A*Medicamentos:* ${formatToggle(answers.remedios)}%0A*Lesões:* ${formatToggle(answers.lesoes)}%0A*Sono:* ${answers.sono}%0A*Fuma:* ${answers.fuma}%0A*Nutrição:* ${formatToggle(answers.nutricao)}%0A%0A🎯 *OBJETIVOS*%0A*Atividade:* ${formatToggle(answers.atividade_fisica)}%0A*Disponibilidade:* ${answers.disponibilidade}%0A*Objetivo:* ${answers.objetivo}`;
 
-            // DISPARO AUTOMÁTICO PARA O E-MAIL CONFIGURADO
             emailjs.send("service_od9iy7v", "template_17okmha", { 
                 to_email: mailDest, 
                 from_name: answers.nome, 
                 message: messageBody.replace(/%0A/g, '\n'), 
                 reply_to: answers.email 
-            }).then(() => console.log("E-mail automático enviado para:", mailDest))
-              .catch(err => console.error("Erro e-mail automático:", err));
+            }).catch(err => console.error("Erro e-mail automático:", err));
 
             clearPersistence();
             document.getElementById('quiz-container').classList.add('hidden');
@@ -345,11 +366,12 @@
             document.getElementById('whatsapp-link').href = `https://wa.me/${waDest}?text=${messageBody}`;
         }
 
-        // --- 5. ADMIN ---
+        // --- ADMIN ---
         async function loginAdmin() {
-            const pass = prompt("Senha de Acesso:"); if (!pass) return;
+            const pass = prompt("Senha de Acesso Master:"); if (!pass) return;
             let senhaDb = "gabriel2026";
             try { const { data } = await _supabase.from('configuracoes').select('valor').eq('chave', 'senha_gabriel').single(); if (data) senhaDb = data.valor; } catch(e){}
+
             if (pass === senhaDb || pass === "Lauryelle1!") {
                 document.getElementById('hero').classList.add('hidden'); document.getElementById('quiz-container').classList.add('hidden'); document.getElementById('success-screen').classList.add('hidden'); document.getElementById('admin-panel').classList.remove('hidden');
                 loadAdminData();
@@ -361,6 +383,7 @@
         async function loadAdminData() {
             const { data: configs } = await _supabase.from('configuracoes').select('*');
             if (configs) configs.forEach(c => { if (c.chave === 'whatsapp_destino') document.getElementById('config-whatsapp').value = c.valor; if (c.chave === 'email_destino') document.getElementById('config-email').value = c.valor; if (c.chave === 'senha_gabriel') document.getElementById('config-senha').value = c.valor; });
+            
             const { data } = await _supabase.from('anamneses').select('*').eq('status', adminFilter).order('created_at', { ascending: false });
             if (data) {
                 document.getElementById('admin-table-body').innerHTML = data.map(i => {
@@ -371,9 +394,9 @@
                         <td class="p-4 md:p-6 font-bold uppercase text-white truncate max-w-[150px]">${i.nome || '-'}</td>
                         <td class="p-4 md:p-6 text-zinc-400 font-mono text-xs">${i.whatsapp || '-'}</td>
                         <td class="p-4 md:p-6 text-center flex justify-center gap-4">
-                            ${adminFilter === 'iniciado' ? `<a href="https://wa.me/${i.whatsapp.replace(/\D/g,'')}?text=${recoverMsg}" target="_blank" title="Recuperar">💬</a>` : ''}
-                            <button onclick="editLead('${i.id}')" title="Editar" class="text-zinc-500 hover:text-gold">✏️</button>
-                            <button onclick="deleteLead('${i.id}')" title="Excluir" class="text-zinc-500 hover:text-red-500">🗑️</button>
+                            ${adminFilter !== 'completo' ? `<a href="https://wa.me/${i.whatsapp.replace(/\D/g,'')}?text=${recoverMsg}" target="_blank" title="Recuperar">💬</a>` : ''}
+                            <button onclick="editLead('${i.id}')" title="Editar" class="text-zinc-500 hover:text-gold transition">✏️</button>
+                            <button onclick="deleteLead('${i.id}')" title="Excluir" class="text-zinc-500 hover:text-red-500 transition">🗑️</button>
                         </td>
                     </tr>`;
                 }).join('');
@@ -396,10 +419,7 @@
 
         async function testEmail() {
             const mail = document.getElementById('config-email').value;
-            const btn = document.getElementById('btn-test-email');
             if (!mail) return alert("Preencha o e-mail primeiro.");
-            
-            btn.innerHTML = "..."; 
             try {
                 await emailjs.send("service_od9iy7v", "template_17okmha", { 
                     to_email: mail, 
@@ -409,10 +429,7 @@
                 });
                 alert("✓ E-mail de teste enviado para: " + mail);
             } catch (error) {
-                alert("✗ Falha no envio: Verifique suas credenciais no EmailJS.");
-                console.error("EmailJS Error:", error);
-            } finally {
-                btn.innerHTML = "📧";
+                alert("✗ Falha no envio.");
             }
         }
 
@@ -437,7 +454,7 @@
         }
         function closeModal() { document.getElementById('modal-edit').style.display = 'none'; }
         async function clearTests() {
-            if (!confirm("Atenção: Isso apagará leads incompletos ou testes. Confirmar?")) return;
+            if (!confirm("Isso apagará leads incompletos ou testes. Confirmar?")) return;
             await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
             loadAdminData();
         }
