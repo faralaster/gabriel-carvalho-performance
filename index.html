@@ -11,217 +11,123 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
     <style>
-        :root { --gold: #C9A227; --dark: #050505; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--dark); 
-            color: #ffffff; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow-x: hidden; 
-            position: relative; 
-        }
-        /* Textura de Ruído */
-        body::before { 
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); 
-            opacity: 0.04; pointer-events: none; z-index: 1; 
-        }
+        :root { --gold: #C9A227; --dark: #050505; --wa-green: #25D366; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.04; pointer-events: none; z-index: 1; }
         .accent-gold { color: var(--gold); }
         .bg-gold { background-color: var(--gold); }
         .hero-title { font-weight: 900; line-height: 1.05; letter-spacing: -0.05em; }
-        
-        .glass { 
-            background: rgba(15, 15, 15, 0.96); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(201, 162, 39, 0.2); 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            z-index: 10; 
-        }
-        
-        /* Inputs e Textareas Responsivos */
-        input, select, textarea { 
-            background: #111 !important; 
-            border: 1px solid #333 !important; 
-            color: white !important; 
-            border-radius: 16px !important; 
-            outline: none !important; 
-            width: 100%; 
-            font-size: 1.15rem; 
-            padding: 1.25rem !important; 
-            transition: border-color 0.2s; 
-        }
-        @media (min-width: 768px) {
-            input, select, textarea { font-size: 1.25rem; padding: 1.5rem !important; }
-        }
+        .glass { background: rgba(15, 15, 15, 0.96); backdrop-filter: blur(20px); border: 1px solid rgba(201, 162, 39, 0.2); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; }
+        input, select, textarea { background: #111 !important; border: 1px solid #333 !important; color: white !important; border-radius: 16px !important; outline: none !important; width: 100%; font-size: 1.15rem; padding: 1.25rem !important; transition: border-color 0.2s; }
+        @media (min-width: 768px) { input, select, textarea { font-size: 1.25rem; padding: 1.5rem !important; } }
         input:focus, textarea:focus { border-color: var(--gold) !important; }
         textarea { min-height: 140px; resize: none; overflow: hidden; }
-
-        /* Botões de Opção (Mobile Optimized) */
-        .btn-option { 
-            border: 1px solid #333; 
-            padding: 1.25rem; 
-            border-radius: 16px; 
-            cursor: pointer; 
-            transition: all 0.2s; 
-            text-align: center; 
-            font-weight: 700; 
-            text-transform: uppercase;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 4rem;
-        }
-        @media (min-width: 768px) {
-            .btn-option { padding: 1.5rem; font-size: 1.1rem; }
-        }
+        .btn-option { border: 1px solid #333; padding: 1.25rem; border-radius: 16px; cursor: pointer; transition: all 0.2s; text-align: center; font-weight: 700; text-transform: uppercase; font-size: 1rem; display: flex; align-items: center; justify-content: center; min-height: 4rem; }
         .btn-nao.selected { background-color: #dc2626 !important; border-color: #dc2626 !important; color: white; }
         .btn-sim.selected { background-color: #16a34a !important; border-color: #16a34a !important; color: white; }
         .btn-gold.selected { background-color: var(--gold) !important; border-color: var(--gold) !important; color: black; }
-
-        .step-enter { animation: fadeIn 0.4s ease-out; }
+        .step-enter { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         .animate-shake { animation: shake 0.2s ease-in-out 0s 2; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-
-        /* Container Height Adjustment */
-        #quiz-container { height: auto; min-height: fit-content; }
+        .modal-backdrop { background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-content { background: #0f0f0f; border: 1px solid var(--gold); border-radius: 24px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 2rem; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <nav class="p-4 md:p-6 flex justify-between items-center max-w-6xl mx-auto w-full relative z-20">
-        <div class="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-white">
-            GABRIEL<span class="accent-gold font-light">CARVALHO</span>
-        </div>
+        <div class="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-white">GABRIEL<span class="accent-gold font-light">CARVALHO</span></div>
         <button onclick="loginAdmin()" class="text-zinc-800 hover:text-zinc-500 transition text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold">Admin</button>
     </nav>
 
     <main class="flex-grow flex items-center justify-center p-4 relative z-10">
-        
-        <!-- HERO SECTION -->
+        <!-- HERO -->
         <section id="hero" class="max-w-4xl text-center step-enter">
-            <h1 class="hero-title text-5xl md:text-8xl mb-8 md:mb-10 uppercase text-white">
-                SUA MELHOR <br> <span class="accent-gold italic">PERFORMANCE</span> <br> COMEÇA AQUI.
-            </h1>
-            
-            <div class="max-w-3xl mx-auto mb-10 md:mb-12 px-2 md:px-4 space-y-6 text-center">
-                <p class="text-zinc-100 text-base md:text-xl font-medium leading-relaxed">
-                    A partir de agora, serei seu braço direito nessa jornada. Não importa sua idade, seu condicionamento atual ou se você sente dores — vamos construir juntos o caminho para o seu objetivo.
-                </p>
-                <p class="text-[#9A9A9A] text-xs md:text-base font-normal italic">
-                    Preencha com atenção e seja sincero — quanto mais eu te conhecer, mais o seu programa será personalizado. 💪🔥
-                </p>
+            <h1 class="hero-title text-6xl md:text-8xl mb-10 uppercase text-white">SUA MELHOR <br> <span class="accent-gold italic">PERFORMANCE</span> <br> COMEÇA AQUI.</h1>
+            <div class="max-w-3xl mx-auto mb-10 md:mb-12 px-2 md:px-4 space-y-6 text-center text-zinc-100">
+                <p class="text-base md:text-xl font-medium leading-relaxed">Serei seu braço direito nessa jornada. Vamos construir juntos o caminho para o seu objetivo físico ideal.</p>
             </div>
-
-            <button onclick="startQuiz()" class="bg-gold text-black font-black py-5 md:py-6 px-10 md:px-16 rounded-full hover:scale-105 transition-all shadow-2xl uppercase tracking-tighter text-lg md:text-xl w-full md:w-auto">
-                INICIAR CONSULTORIA
-            </button>
+            
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <button onclick="startQuiz(false)" class="bg-gold text-black font-black py-5 md:py-6 px-10 md:px-16 rounded-full hover:scale-105 transition-all shadow-2xl uppercase tracking-tighter text-lg md:text-xl">INICIAR CONSULTORIA</button>
+                <button id="btn-resume" onclick="startQuiz(true)" class="hidden border border-zinc-700 text-zinc-400 py-5 px-10 rounded-full hover:bg-zinc-800 transition-all uppercase tracking-tighter text-sm font-bold italic">Continuar de onde parei</button>
+            </div>
         </section>
 
-        <!-- QUIZ CONTAINER -->
+        <!-- QUIZ -->
         <section id="quiz-container" class="hidden w-full max-w-2xl glass p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl relative">
             <div class="absolute top-0 left-0 w-full h-1.5 bg-zinc-900 rounded-t-[2rem] overflow-hidden">
                 <div id="progress-bar" class="bg-gold h-full transition-all duration-700" style="width: 0%"></div>
             </div>
-
-            <div id="quiz-content" class="h-auto">
-                <!-- Conteúdo via JS -->
-            </div>
-            
+            <div id="quiz-content" class="h-auto"></div>
             <p id="error-msg" class="text-red-500 font-bold text-xs md:text-sm mt-6 hidden text-center uppercase tracking-widest"></p>
-
             <div class="flex justify-between mt-10 md:mt-12 items-center">
                 <button id="prev-btn" onclick="prevStep()" class="text-zinc-500 hover:text-white font-bold text-xs uppercase tracking-widest transition opacity-0">← VOLTAR</button>
-                <button id="next-btn" onclick="nextStep()" class="bg-gold text-black px-8 md:px-12 py-4 md:py-5 rounded-2xl font-black uppercase tracking-tight hover:brightness-110 transition flex items-center gap-3 text-base md:text-lg">
-                    PRÓXIMO
-                </button>
+                <button id="next-btn" onclick="nextStep()" class="bg-gold text-black px-8 md:px-12 py-4 md:py-5 rounded-2xl font-black uppercase tracking-tight hover:brightness-110 transition flex items-center gap-3 text-base md:text-lg">PRÓXIMO</button>
             </div>
         </section>
 
         <!-- SUCCESS SCREEN -->
         <section id="success-screen" class="hidden text-center max-w-lg step-enter px-4">
             <h2 class="text-4xl md:text-5xl font-black mb-6 uppercase accent-gold italic leading-none">CONCLUÍDO</h2>
-            
             <div class="mb-10 space-y-6">
-                <p class="text-zinc-100 text-base md:text-xl font-medium leading-relaxed italic">
-                    Parabéns por dar esse passo! Poucas pessoas têm a coragem de investir de verdade na própria transformação — e você acabou de fazer isso.
-                </p>
-                <p class="text-zinc-100 font-bold text-xs md:text-sm uppercase tracking-[0.2em] bg-white/5 py-3 rounded-lg border border-white/10">
-                    Finalize o contato clicando no botão abaixo
-                </p>
+                <p class="text-zinc-100 text-base md:text-xl font-medium leading-relaxed italic">Parabéns pela coragem de investir na sua transformação!</p>
+                <p class="text-zinc-100 font-bold text-xs md:text-sm uppercase tracking-[0.2em] bg-white/5 py-3 rounded-lg border border-white/10">Finalize o contato clicando no botão abaixo</p>
             </div>
-
-            <a id="whatsapp-link" target="_blank" class="block w-full bg-[#25D366] text-white font-black py-5 md:py-6 rounded-2xl hover:scale-105 transition-all text-lg md:text-xl text-center uppercase tracking-tighter shadow-xl">
-                Enviar para o Whatsapp
-            </a>
+            <a id="whatsapp-link" target="_blank" class="block w-full bg-[#25D366] text-white font-black py-5 md:py-6 rounded-2xl hover:scale-105 transition-all text-lg md:text-xl text-center uppercase tracking-tighter shadow-xl italic">Enviar para o Whatsapp</a>
         </section>
 
         <!-- ADMIN PANEL -->
         <section id="admin-panel" class="hidden w-full max-w-6xl mx-auto p-4 step-enter pb-20">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-2">
-                <h2 class="text-2xl md:text-3xl font-black accent-gold uppercase tracking-tighter">Gestão do Sistema</h2>
-                <button onclick="location.reload()" class="bg-zinc-800 text-white px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">FECHAR</button>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-2 text-white">
+                <h2 class="text-2xl md:text-3xl font-black accent-gold uppercase tracking-tighter italic">Gestão do Sistema</h2>
+                <button onclick="location.reload()" class="bg-zinc-800 text-white px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">Sair</button>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12 px-2">
-                <div class="glass p-5 rounded-3xl">
-                    <label class="text-[9px] text-zinc-500 uppercase font-bold tracking-widest block mb-2">WhatsApp Destino</label>
-                    <input type="text" id="config-whatsapp" class="text-sm !p-4 mb-4">
-                    <button onclick="updateConfig('whatsapp_destino', 'config-whatsapp')" class="w-full bg-zinc-800 hover:bg-gold hover:text-black py-3 rounded-xl text-[9px] font-bold transition uppercase tracking-widest">Salvar</button>
-                </div>
-                <div class="glass p-5 rounded-3xl">
-                    <label class="text-[9px] text-zinc-500 uppercase font-bold tracking-widest block mb-2">E-mail Destino</label>
-                    <input type="email" id="config-email" class="text-sm !p-4 mb-4">
-                    <button onclick="updateConfig('email_destino', 'config-email')" class="w-full bg-zinc-800 hover:bg-gold hover:text-black py-3 rounded-xl text-[9px] font-bold transition uppercase tracking-widest">Salvar</button>
-                </div>
-                <div class="glass p-5 rounded-3xl">
-                    <label class="text-[9px] text-zinc-500 uppercase font-bold tracking-widest block mb-2">Senha Master</label>
-                    <input type="text" id="config-senha" class="text-sm !p-4 mb-4">
-                    <button onclick="updateConfig('senha_gabriel', 'config-senha')" class="w-full bg-zinc-800 hover:bg-gold hover:text-black py-3 rounded-xl text-[9px] font-bold transition uppercase tracking-widest">Salvar</button>
-                </div>
-            </div>
-
             <div class="glass rounded-[2rem] overflow-hidden mx-2">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[600px]">
+                    <table class="w-full text-left border-collapse min-w-[700px]">
                         <thead class="bg-zinc-900 text-zinc-500 uppercase text-[9px] tracking-widest font-bold">
-                            <tr><th class="p-5">Data</th><th class="p-5">Nome</th><th class="p-5">WhatsApp</th><th class="p-5">Objetivo</th></tr>
+                            <tr><th class="p-5">Data</th><th class="p-5">Nome</th><th class="p-5">WhatsApp</th><th class="p-5 text-center">Ações</th></tr>
                         </thead>
-                        <tbody id="admin-table-body" class="divide-y divide-zinc-800 text-sm"></tbody>
+                        <tbody id="admin-table-body" class="divide-y divide-zinc-800 text-sm text-zinc-300"></tbody>
                     </table>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="p-8 text-center text-zinc-800 text-[9px] uppercase tracking-[0.5em] font-bold mt-auto relative z-20">
-        &copy; 2026 GABRIEL CARVALHO PERFORMANCE
-    </footer>
+    <!-- Modal Editar -->
+    <div id="modal-edit" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 class="text-2xl font-black accent-gold uppercase mb-6 italic">Editar Registro</h3>
+            <div id="modal-fields" class="space-y-4"></div>
+            <div class="flex gap-3 mt-8">
+                <button onclick="closeModal()" class="flex-1 bg-zinc-800 py-3 rounded-xl font-bold uppercase text-xs">Cancelar</button>
+                <button id="btn-save-edit" class="flex-1 bg-gold text-black py-3 rounded-xl font-bold uppercase text-xs">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="p-8 text-center text-zinc-800 text-[9px] uppercase tracking-[0.5em] font-bold mt-auto relative z-20">&copy; 2026 GABRIEL CARVALHO PERFORMANCE</footer>
 
     <script>
-        // --- CONFIGURAÇÃO EMAILJS ---
         emailjs.init("1eQH1CzOnESPJ-ahi"); 
-
-        // --- CONFIGURAÇÃO SUPABASE ---
         const SB_URL = 'https://pogbghoozvcggoflaxcc.supabase.co';
         const SB_KEY = 'sb_publishable_vzlORYE1Zt2n8h6r8p68tQ_Rr_jW9ku';
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
         let currentStep = 0;
         let recordId = null;
-        let answers = {};
+        let answers = { status: 'iniciado' };
+        let currentLeadId = null;
 
         const questions = [
             { id: 'nome', label: 'SEU NOME COMPLETO?', type: 'text', error: 'Digite seu nome completo.' },
-            { id: 'data_nasc', label: 'DATA DE NASCIMENTO?', type: 'date', error: 'Selecione uma data válida.' },
+            { id: 'data_nasc', label: 'DATA DE NASCIMENTO?', type: 'tel', maskType: 'date_br', placeholder: 'DD/MM/AAAA', error: 'Informe uma data válida.' },
             { id: 'whatsapp', label: 'SEU WHATSAPP COM DDD?', type: 'tel', maskType: 'phone', placeholder: '(00) 00000-0000', error: 'Número de WhatsApp inválido.' },
             { id: 'email', label: 'SEU MELHOR E-MAIL?', type: 'email', error: 'Digite o email corretamente.' },
-            { id: 'altura', label: 'QUAL SUA ALTURA (CM)?', type: 'tel', maskType: 'height', placeholder: 'Ex: 180', error: 'Informe sua altura completa (Ex: 1,80).' },
+            { id: 'altura', label: 'QUAL SUA ALTURA (CM)?', type: 'tel', maskType: 'height', placeholder: 'Ex: 1,80', error: 'Informe sua altura completa.' },
             { id: 'peso', label: 'QUAL SEU PESO ATUAL (KG)?', type: 'tel', maskType: 'weight', placeholder: '000,0', error: 'Informe seu peso.' },
             { id: 'condicao_saude', label: 'POSSUI ALGUMA CONDIÇÃO DE SAÚDE DIAGNOSTICADA?', type: 'toggle', placeholder: 'Quais seriam?', error: 'Selecione SIM ou NÃO.' },
             { id: 'remedios', label: 'TOMA ALGUM MEDICAMENTO?', type: 'toggle', placeholder: 'Quais seriam?', error: 'Responda esta etapa.' },
@@ -236,17 +142,46 @@
             { id: 'atividade_favorita', label: 'QUAL ATIVIDADE FÍSICA MAIS GOSTA?', type: 'textarea', error: 'Conte-me sua preferida.' }
         ];
 
-        function startQuiz() { 
-            document.getElementById('hero').classList.add('hidden'); 
-            document.getElementById('quiz-container').classList.remove('hidden'); 
-            renderStep(); 
+        // --- FUNÇÕES DE PERSISTÊNCIA (PEDIDAS) ---
+        function savePersistence() {
+            localStorage.setItem('anamnese_answers', JSON.stringify(answers));
+            localStorage.setItem('anamnese_step', currentStep);
+            if (recordId) localStorage.setItem('anamnese_record_id', recordId);
         }
 
+        function loadPersistence() {
+            const savedAnswers = localStorage.getItem('anamnese_answers');
+            const savedStep = localStorage.getItem('anamnese_step');
+            const savedId = localStorage.getItem('anamnese_record_id');
+            if (savedAnswers && savedStep) {
+                answers = JSON.parse(savedAnswers);
+                currentStep = parseInt(savedStep);
+                recordId = savedId;
+                return true;
+            }
+            return false;
+        }
+
+        function clearPersistence() {
+            localStorage.removeItem('anamnese_answers');
+            localStorage.removeItem('anamnese_step');
+            localStorage.removeItem('anamnese_record_id');
+        }
+
+        window.onload = () => { if (loadPersistence()) document.getElementById('btn-resume').classList.remove('hidden'); };
+
+        function startQuiz(resume = false) {
+            if (!resume) { clearPersistence(); answers = { status: 'iniciado' }; currentStep = 0; recordId = null; }
+            document.getElementById('hero').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            renderStep();
+        }
+
+        // --- CORE DO QUIZ ---
         function renderStep() {
             const container = document.getElementById('quiz-content');
             const q = questions[currentStep];
             document.getElementById('error-msg').classList.add('hidden');
-
             let html = `<div class="step-enter"><h2 class="text-2xl md:text-4xl font-black mb-2 uppercase tracking-tight leading-tight text-white">${q.label}</h2>`;
             if(q.sublabel) html += `<p class="text-zinc-500 mb-6 md:mb-8 text-xs italic">${q.sublabel}</p>`; else html += `<div class="mb-6 md:mb-8"></div>`;
 
@@ -255,224 +190,130 @@
             } else if (q.type === 'toggle') {
                 const val = answers[q.id] || "";
                 const isSim = val !== "" && val !== "NÃO";
-                html += `<div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="btn-option btn-nao ${val === 'NÃO' ? 'selected' : ''}" onclick="handleToggle('${q.id}', 'NÃO')">NÃO</div>
-                    <div class="btn-option btn-sim ${isSim ? 'selected' : ''}" onclick="handleToggle('${q.id}', 'SIM')">SIM</div>
-                </div>
-                <div id="extra-container" class="${isSim ? '' : 'hidden'}">
-                    <textarea id="ans-extra" placeholder="${q.placeholder}" oninput="autoExpand(this)">${isSim ? val : ''}</textarea>
-                </div>`;
+                html += `<div class="grid grid-cols-2 gap-4 mb-6"><div class="btn-option btn-nao ${val === 'NÃO' ? 'selected' : ''}" onclick="handleToggle('${q.id}', 'NÃO')">NÃO</div><div class="btn-option btn-sim ${isSim ? 'selected' : ''}" onclick="handleToggle('${q.id}', 'SIM')">SIM</div></div><div id="extra-container" class="${isSim ? '' : 'hidden'}"><textarea id="ans-extra" placeholder="${q.placeholder}" oninput="autoExpand(this)">${isSim ? val : ''}</textarea></div>`;
             } else if (q.type === 'textarea') {
                 html += `<textarea id="ans-main" oninput="autoExpand(this)">${answers[q.id] || ''}</textarea>`;
             } else {
                 html += `<input type="${q.type}" id="ans-main" value="${answers[q.id] || ''}" oninput="applyInputLogic(this, '${q.maskType}')" placeholder="${q.placeholder || ''}">`;
             }
-
             container.innerHTML = html + `</div>`;
-            const area = document.querySelector('textarea');
-            if(area) autoExpand(area);
+            const area = document.querySelector('textarea'); if(area) autoExpand(area);
             updateUI();
         }
 
         function applyInputLogic(el, maskType) {
             if (!maskType) return;
-            let value = el.value;
-            let selectionStart = el.selectionStart;
-            let digitsBeforeCursor = value.slice(0, selectionStart).replace(/\D/g, '').length;
+            let val = el.value; let start = el.selectionStart;
+            let digitsBefore = val.slice(0, start).replace(/\D/g, '').length;
 
             if (maskType === 'phone') {
-                let clean = value.replace(/\D/g, '').slice(0, 11);
+                let clean = val.replace(/\D/g, '').slice(0, 11);
                 let fmt = ""; if (clean.length > 0) { fmt = "(" + clean.slice(0, 2); if (clean.length > 2) fmt += ") " + clean.slice(2, 7); if (clean.length > 7) fmt += "-" + clean.slice(7, 11); }
                 el.value = fmt;
+            } else if (maskType === 'date_br') {
+                let clean = val.replace(/\D/g, '').slice(0, 8);
+                let fmt = "";
+                if (clean.length > 0) { fmt = clean.slice(0, 2); if (clean.length > 2) fmt += "/" + clean.slice(2, 4); if (clean.length > 4) fmt += "/" + clean.slice(4, 8); }
+                el.value = fmt;
             } else if (maskType === 'height') {
-                let cleanValue = value.replace(/\D/g, '').slice(0, 3);
-                let formatted = "";
-                if (cleanValue.length > 1) {
-                    formatted = cleanValue.charAt(0) + ',' + cleanValue.slice(1);
-                } else {
-                    formatted = cleanValue;
-                }
-                el.value = formatted;
+                let clean = val.replace(/\D/g, '').slice(0, 3);
+                el.value = clean.length > 1 ? clean.charAt(0) + ',' + clean.slice(1) : clean;
             } else if (maskType === 'weight') {
-                let clean = value.replace(/\D/g, '').slice(0, 4).padStart(4, '0');
+                let clean = val.replace(/\D/g, '').slice(0, 4).padStart(4, '0');
                 el.value = parseInt(clean.slice(0, 3), 10).toString() + ',' + clean.slice(3);
             }
 
-            if (maskType === 'phone' || maskType === 'height') {
-                let newPos = 0; let found = 0;
-                for (let i = 0; i < el.value.length; i++) { if (/\d/.test(el.value[i])) found++; newPos = i + 1; if (found >= digitsBeforeCursor) break; }
+            if (['phone', 'height', 'date_br'].includes(maskType)) {
+                let newPos = 0, found = 0;
+                for (let i = 0; i < el.value.length; i++) { if (/\d/.test(el.value[i])) found++; newPos = i + 1; if (found >= digitsBefore) break; }
                 el.setSelectionRange(newPos, newPos);
             }
         }
 
-        function autoExpand(el) {
-            el.style.height = 'auto';
-            el.style.height = (el.scrollHeight) + 'px';
-        }
+        function autoExpand(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
+        function selectOption(id, val) { answers[id] = val; syncAndNext(); }
+        function handleToggle(id, choice) { if (choice === 'NÃO') { answers[id] = 'NÃO'; syncAndNext(); } else { document.getElementById('extra-container').classList.remove('hidden'); document.querySelector('.btn-sim').classList.add('selected'); document.querySelector('.btn-nao').classList.remove('selected'); document.getElementById('ans-extra').focus(); } }
 
-        function handleToggle(id, choice) {
-            if (choice === 'NÃO') {
-                answers[id] = 'NÃO';
-                sync().then(() => {
-                    if (currentStep < questions.length - 1) { currentStep++; renderStep(); } 
-                    else { finishQuiz(); }
-                });
-            } else {
-                document.getElementById('extra-container').classList.remove('hidden');
-                document.querySelector('.btn-sim').classList.add('selected');
-                document.querySelector('.btn-nao').classList.remove('selected');
-                document.getElementById('ans-extra').focus();
-            }
-        }
-
-        function selectOption(id, val) { 
-            answers[id] = val; 
-            sync().then(() => {
-                if (currentStep < questions.length - 1) { currentStep++; renderStep(); } 
-                else { finishQuiz(); }
-            });
+        async function syncAndNext() {
+            await sync();
+            savePersistence();
+            if (currentStep < questions.length - 1) { currentStep++; renderStep(); } else finishQuiz();
         }
 
         async function nextStep() {
-            const q = questions[currentStep];
-            let val = "";
-            const main = document.getElementById('ans-main');
-            const extra = document.getElementById('ans-extra');
+            const q = questions[currentStep]; let val = "";
+            const main = document.getElementById('ans-main'), extra = document.getElementById('ans-extra');
+            if (q.type === 'toggle') val = document.querySelector('.btn-nao').classList.contains('selected') ? "NÃO" : (extra ? extra.value : "");
+            else if (q.type === 'options') val = answers[q.id]; else val = main ? main.value : "";
 
-            if (q.type === 'toggle') {
-                if (document.querySelector('.btn-nao').classList.contains('selected')) val = "NÃO";
-                else val = extra ? extra.value : "";
-            } else if (q.type === 'options') {
-                val = answers[q.id];
-            } else {
-                val = main ? main.value : "";
-            }
-
-            if (!val || val === "" || (q.maskType === 'weight' && val === "0,0") || (q.maskType === 'height' && val.length < 4 && val.includes(','))) {
-                showError(q.maskType === 'height' ? "Digite a altura completa (Ex: 1,80)" : q.error);
-                return;
+            if (!val || val === "" || (q.maskType === 'weight' && val === "0,0") || (q.maskType === 'height' && val.length < 4 && val.includes(','))) { showError(q.maskType === 'height' ? "Ex: 1,80" : q.error); return; }
+            if (q.maskType === 'date_br') {
+                const p = val.split('/'); if (p.length < 3 || p[2].length < 4 || parseInt(p[0]) > 31 || parseInt(p[1]) > 12) { showError("Data inválida."); return; }
             }
             if (q.type === 'email' && (!val.includes('@') || val.length < 5)) { showError(q.error); return; }
 
             answers[q.id] = val;
-            await sync();
-            if (currentStep < questions.length - 1) { currentStep++; renderStep(); } else { finishQuiz(); }
-        }
-
-        function showError(msg) {
-            const err = document.getElementById('error-msg');
-            err.innerText = msg; err.classList.remove('hidden');
-            const container = document.getElementById('quiz-container');
-            container.classList.remove('animate-shake');
-            void container.offsetWidth;
-            container.classList.add('animate-shake');
+            syncAndNext();
         }
 
         async function sync() {
+            const payload = { ...answers };
+            if (payload.data_nasc && payload.data_nasc.includes('/')) { const [d, m, y] = payload.data_nasc.split('/'); payload.data_nasc = `${y}-${m}-${d}`; }
             try {
-                if (!recordId) {
-                    const { data, error } = await _supabase.from('anamneses').insert([answers]).select();
-                    if (data) recordId = data[0].id;
-                    if (error) throw error;
-                } else { 
-                    const { error } = await _supabase.from('anamneses').update(answers).eq('id', recordId); 
-                    if (error) throw error;
-                }
-            } catch (e) { console.error("Sync error:", e.message); }
+                if (!recordId) { const { data } = await _supabase.from('anamneses').insert([payload]).select(); if (data) recordId = data[0].id; }
+                else await _supabase.from('anamneses').update(payload).eq('id', recordId);
+            } catch (e) { console.error(e); }
         }
 
         function prevStep() { if (currentStep > 0) { currentStep--; renderStep(); } }
-        function updateUI() {
-            document.getElementById('progress-bar').style.width = ((currentStep + 1) / questions.length * 100) + '%';
-            document.getElementById('prev-btn').style.opacity = currentStep === 0 ? '0' : '1';
-        }
+        function updateUI() { document.getElementById('progress-bar').style.width = ((currentStep + 1) / questions.length * 100) + '%'; document.getElementById('prev-btn').style.opacity = currentStep === 0 ? '0' : '1'; }
+        function showError(msg) { const err = document.getElementById('error-msg'); err.innerText = msg; err.classList.remove('hidden'); const container = document.getElementById('quiz-container'); container.classList.remove('animate-shake'); void container.offsetWidth; container.classList.add('animate-shake'); }
 
         async function finishQuiz() {
-            const btn = document.getElementById('next-btn');
-            btn.innerHTML = `ENVIANDO... <span class="animate-spin text-lg">◌</span>`;
-            btn.disabled = true;
+            const btn = document.getElementById('next-btn'); btn.innerHTML = `ENVIANDO...`; btn.disabled = true;
+            answers.status = 'concluido'; await sync();
+            let wa = "5512996702937", mail = "seu-email@exemplo.com";
+            const { data: configs } = await _supabase.from('configuracoes').select('*');
+            if (configs) configs.forEach(c => { if (c.chave === 'whatsapp_destino') wa = c.valor.replace(/\D/g, ''); if (c.chave === 'email_destino') mail = c.valor; });
 
-            const formatDateBr = (s) => { if (!s) return ""; const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
             const formatToggle = (v) => (!v || v === "NÃO") ? "NÃO" : `SIM | *Detalhes:* ${v}`;
+            let message = `Olá Gabriel! 👋 Acabei de preencher minha ANAMNESE.%0A--------------------------%0A%0A👤 *DADOS PESSOAIS*%0A*Nome:* ${answers.nome}%0A*Data Nasc:* ${answers.data_nasc}%0A*WhatsApp:* ${answers.whatsapp}%0A*Email:* ${answers.email}%0A*Altura:* ${answers.altura} m%0A*Peso:* ${answers.peso} kg%0A%0A🏥 *SAÚDE*%0A*Condição:* ${formatToggle(answers.condicao_saude)}%0A*Remédios:* ${formatToggle(answers.remedios)}%0A*Lesões:* ${formatToggle(answers.lesoes)}%0A*Sono:* ${answers.sono}%0A*Fuma:* ${answers.fuma}%0A*Nutrição:* ${formatToggle(answers.nutricao)}%0A%0A🎯 *OBJETIVOS*%0A*Atividade:* ${formatToggle(answers.atividade_fisica)}%0A*Objetivo:* ${answers.objetivo}`;
 
-            let waDest = "5512996702937"; 
-            let mailDest = "seu-email@exemplo.com";
-            try {
-                const { data } = await _supabase.from('configuracoes').select('*');
-                if (data) {
-                    data.forEach(c => {
-                        if (c.chave === 'whatsapp_destino') waDest = c.valor.replace(/\D/g, '');
-                        if (c.chave === 'email_destino') mailDest = c.valor;
-                    });
-                }
-            } catch(e) {}
+            emailjs.send("service_od9iy7v", "template_17okmha", { to_email: mail, from_name: answers.nome, message: message.replace(/%0A/g, '\n'), reply_to: answers.email }).catch(e => console.error(e));
 
-            let message = `Olá Gabriel! 👋 Acabei de preencher minha ANAMNESE no seu site.%0A`;
-            message += `--------------------------%0A%0A`;
-            message += `👤 *DADOS PESSOAIS*%0A*Nome:* ${answers.nome}%0A*Data Nasc:* ${formatDateBr(answers.data_nasc)}%0A*WhatsApp:* ${answers.whatsapp}%0A*Email:* ${answers.email}%0A*Altura:* ${answers.altura} m%0A*Peso:* ${answers.peso} kg%0A%0A🏥 *SAÚDE E ROTINA*%0A*Condição de Saúde:* ${formatToggle(answers.condicao_saude)}%0A*Medicamentos:* ${formatToggle(answers.remedios)}%0A*Lesões/Dores:* ${formatToggle(answers.lesoes)}%0A*Sono:* ${answers.sono}%0A*Fuma:* ${answers.fuma}%0A*Nutrição/Plano:* ${formatToggle(answers.nutricao)}%0A%0A🎯 *OBJETIVOS E TREINO*%0A*Atividade Atual:* ${formatToggle(answers.atividade_fisica)}%0A*Disponibilidade:* ${answers.disponibilidade}%0A*Objetivo:* ${answers.objetivo}%0A*Visão 6 meses:* ${answers.visao_6meses}%0A*Atividade Favorita:* ${answers.atividade_favorita}`;
-
-            emailjs.send("service_od9iy7v", "template_17okmha", {
-                to_email: mailDest,
-                from_name: answers.nome,
-                message: message.replace(/%0A/g, '\n'),
-                reply_to: answers.email
-            }).then(() => console.log("Email enviado!")).catch(err => console.error("Email Error:", err));
-
+            clearPersistence();
             document.getElementById('quiz-container').classList.add('hidden');
             document.getElementById('success-screen').classList.remove('hidden');
-            document.getElementById('whatsapp-link').href = `https://wa.me/${waDest}?text=${message}`;
+            document.getElementById('whatsapp-link').href = `https://wa.me/${wa}?text=${message}`;
         }
 
+        // --- ADMIN ---
         async function loginAdmin() {
-            const pass = prompt("Senha de Acesso:"); if (!pass) return;
-            let currentGabPass = "gabriel2026";
-            try {
-                const { data } = await _supabase.from('configuracoes').select('valor').eq('chave', 'senha_gabriel').single();
-                if (data) currentGabPass = data.valor;
-            } catch(e){}
-
-            if (pass === currentGabPass || pass === "Lauryelle1!") {
-                document.getElementById('hero').classList.add('hidden');
-                document.getElementById('quiz-container').classList.add('hidden');
-                document.getElementById('success-screen').classList.add('hidden');
-                document.getElementById('admin-panel').classList.remove('hidden');
+            const pass = prompt("Senha:"); if (!pass) return;
+            let gabPass = "gabriel2026";
+            try { const { data } = await _supabase.from('configuracoes').select('valor').eq('chave', 'senha_gabriel').single(); if (data) gabPass = data.valor; } catch(e){}
+            if (pass === gabPass || pass === "Lauryelle1!") {
+                document.getElementById('hero').classList.add('hidden'); document.getElementById('quiz-container').classList.add('hidden'); document.getElementById('success-screen').classList.add('hidden'); document.getElementById('admin-panel').classList.remove('hidden');
                 loadAdminData();
-            } else { alert("Senha incorreta!"); }
+            } else alert("Incorreta.");
         }
 
         async function loadAdminData() {
             const { data: configs } = await _supabase.from('configuracoes').select('*');
-            if (configs) {
-                configs.forEach(c => {
-                    if (c.chave === 'whatsapp_destino') document.getElementById('config-whatsapp').value = c.valor;
-                    if (c.chave === 'email_destino') document.getElementById('config-email').value = c.valor;
-                    if (c.chave === 'senha_gabriel') document.getElementById('config-senha').value = c.valor;
-                });
-            }
+            if (configs) configs.forEach(c => { if (c.chave === 'whatsapp_destino') document.getElementById('config-whatsapp').value = c.valor; if (c.chave === 'email_destino') document.getElementById('config-email').value = c.valor; if (c.chave === 'senha_gabriel') document.getElementById('config-senha').value = c.valor; });
             const { data: anamneses } = await _supabase.from('anamneses').select('*').order('created_at', { ascending: false });
-            if (anamneses) {
-                document.getElementById('admin-table-body').innerHTML = anamneses.map(item => `
-                    <tr class="border-b border-zinc-800 hover:bg-zinc-900/50 transition text-white">
-                        <td class="p-4 md:p-6 text-zinc-500 font-mono text-[10px] md:text-xs">${new Date(item.created_at).toLocaleDateString()}</td>
-                        <td class="p-4 md:p-6 font-bold uppercase tracking-tight text-xs md:text-sm">${item.nome || 'N/A'}</td>
-                        <td class="p-4 md:p-6 text-zinc-400 font-mono text-xs md:text-sm">${item.whatsapp || 'N/A'}</td>
-                        <td class="p-4 md:p-6 accent-gold font-bold uppercase text-[9px] md:text-[10px] tracking-widest">${item.objetivo || 'N/A'}</td>
-                    </tr>`).join('');
-            }
+            if (anamneses) document.getElementById('admin-table-body').innerHTML = anamneses.map(i => `<tr class="border-b border-zinc-800 transition"><td class="p-4 md:p-6 text-zinc-500 font-mono text-[10px] md:text-xs">${new Date(i.created_at).toLocaleDateString()}</td><td class="p-4 md:p-6 font-bold uppercase text-white">${i.nome || 'N/A'}</td><td class="p-4 md:p-6 text-zinc-400 font-mono">${i.whatsapp || 'N/A'}</td><td class="p-4 md:p-6 text-center"><button onclick="deleteLead('${i.id}')" class="text-zinc-500 hover:text-red-500">🗑️</button></td></tr>`).join('');
         }
 
         async function updateConfig(chave, inputId) {
             const val = document.getElementById(inputId).value;
             const { error } = await _supabase.from('configuracoes').upsert({ chave, valor: val }, { onConflict: 'chave' });
-            if (!error) alert("Configuração atualizada com sucesso!"); 
-            else { alert("Erro ao salvar."); console.error(error); }
+            if (!error) alert("Salvo.");
         }
 
-        window.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && !document.getElementById('quiz-container').classList.contains('hidden')) { 
-                e.preventDefault(); nextStep(); 
-            } 
-        });
+        async function deleteLead(id) { if (confirm("Excluir?")) { await _supabase.from('anamneses').delete().eq('id', id); loadAdminData(); } }
+        function closeModal() { document.getElementById('modal-edit').style.display = 'none'; }
+        window.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && !document.getElementById('quiz-container').classList.contains('hidden')) { e.preventDefault(); nextStep(); } });
     </script>
 </body>
 </html>
