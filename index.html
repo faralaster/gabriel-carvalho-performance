@@ -12,13 +12,42 @@
     
     <style>
         :root { --gold: #C9A227; --dark: #050505; --wa-green: #25D366; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.04; pointer-events: none; z-index: 1; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--dark); 
+            color: #ffffff; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-x: hidden; 
+            position: relative; 
+        }
+        body::before { 
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); 
+            opacity: 0.04; pointer-events: none; z-index: 1; 
+        }
         .accent-gold { color: var(--gold); }
         .bg-gold { background-color: var(--gold); }
         .hero-title { font-weight: 900; line-height: 1.05; letter-spacing: -0.05em; }
-        .glass { background: rgba(15, 15, 15, 0.96); backdrop-filter: blur(20px); border: 1px solid rgba(201, 162, 39, 0.2); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; }
-        input, select, textarea { background: #111 !important; border: 1px solid #333 !important; color: white !important; border-radius: 16px !important; outline: none !important; width: 100%; font-size: 1.15rem; padding: 1.25rem !important; transition: border-color 0.2s; }
+        .glass { 
+            background: rgba(15, 15, 15, 0.96); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(201, 162, 39, 0.2); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 10; 
+        }
+        input, select, textarea { 
+            background: #111 !important; 
+            border: 1px solid #333 !important; 
+            color: white !important; 
+            border-radius: 16px !important; 
+            outline: none !important; 
+            width: 100%; 
+            font-size: 1.15rem; 
+            padding: 1.25rem !important; 
+            transition: border-color 0.2s; 
+        }
         @media (min-width: 768px) { input, select, textarea { font-size: 1.25rem; padding: 1.5rem !important; } }
         input:focus, textarea:focus { border-color: var(--gold) !important; }
         textarea { min-height: 140px; resize: none; overflow: hidden; }
@@ -30,29 +59,26 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         .animate-shake { animation: shake 0.2s ease-in-out 0s 2; }
-        .tab-btn.active { border-bottom: 2px solid var(--gold); color: var(--gold); }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
         .modal-backdrop { background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
         .modal-content { background: #0f0f0f; border: 1px solid var(--gold); border-radius: 24px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 2rem; }
     </style>
 </head>
 <body>
 
-    <nav class="p-4 md:p-6 flex justify-between items-center max-w-6xl mx-auto w-full relative z-20">
-        <div class="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-white">GABRIEL<span class="accent-gold font-light">CARVALHO</span></div>
-        <button onclick="loginAdmin()" class="text-zinc-800 hover:text-zinc-500 transition text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold">Admin</button>
+    <nav class="p-6 flex justify-between items-center max-w-6xl mx-auto w-full relative z-20">
+        <div class="text-2xl font-black tracking-tighter uppercase italic text-white">GABRIEL<span class="accent-gold font-light">CARVALHO</span></div>
+        <button onclick="loginAdmin()" class="text-zinc-800 hover:text-zinc-600 transition text-[10px] uppercase tracking-[0.3em] font-bold">Admin</button>
     </nav>
 
     <main class="flex-grow flex items-center justify-center p-4 relative z-10 text-white">
         
         <!-- HERO -->
         <section id="hero" class="max-w-4xl text-center step-enter">
-            <!-- ALTERAÇÃO 1: Layout Responsivo do Título -->
             <h1 class="text-4xl sm:text-6xl md:text-8xl font-black text-white tracking-tighter leading-tight mb-4 uppercase">SUA MELHOR <br> <span class="accent-gold italic">PERFORMANCE</span> <br> COMEÇA AQUI.</h1>
-            
             <div class="max-w-3xl mx-auto mb-10 md:mb-12 px-2 md:px-4 space-y-6 text-center text-zinc-100 italic">
                 <p class="text-base md:text-xl font-medium leading-relaxed">A partir de agora, serei seu braço direito nessa jornada. Vamos construir juntos o caminho para o seu objetivo físico ideal.</p>
             </div>
-            
             <div class="flex flex-col md:flex-row gap-4 justify-center">
                 <button onclick="startQuiz(false)" class="bg-gold text-black font-black py-5 md:py-6 px-10 md:px-16 rounded-full hover:scale-105 transition-all shadow-2xl uppercase tracking-tighter text-lg md:text-xl">INICIAR CONSULTORIA</button>
                 <button id="btn-resume" onclick="startQuiz(true)" class="hidden border border-zinc-700 text-zinc-400 py-5 px-10 rounded-full hover:bg-zinc-800 transition-all uppercase tracking-tighter text-sm font-bold italic">Continuar de onde parei</button>
@@ -68,7 +94,6 @@
             <p id="error-msg" class="text-red-500 font-bold text-xs md:text-sm mt-6 hidden text-center uppercase tracking-widest"></p>
             <div class="flex justify-between mt-10 md:mt-12 items-center">
                 <button id="prev-btn" onclick="prevStep()" class="text-zinc-500 hover:text-white font-bold text-xs uppercase tracking-widest transition opacity-0">← VOLTAR</button>
-                <!-- Botão Próximo -->
                 <button id="next-btn" class="bg-gold text-black px-8 md:px-12 py-4 md:py-5 rounded-2xl font-black uppercase tracking-tight hover:brightness-110 transition flex items-center gap-3 text-base md:text-lg">PRÓXIMO</button>
             </div>
         </section>
@@ -85,8 +110,8 @@
 
         <!-- ADMIN PANEL -->
         <section id="admin-panel" class="hidden w-full max-w-6xl mx-auto p-4 step-enter pb-20">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 px-2 text-white">
-                <h2 class="text-2xl md:text-3xl font-black accent-gold uppercase tracking-tighter italic">Gestão Gabriel</h2>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 px-2">
+                <h2 class="text-2xl md:text-3xl font-black accent-gold uppercase tracking-tighter italic text-white">Gestão Gabriel</h2>
                 <div class="flex gap-2">
                     <button onclick="clearTests()" class="bg-red-900/30 text-red-500 border border-red-900/50 px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition">Limpar Registros de Teste</button>
                     <button onclick="location.reload()" class="bg-zinc-800 text-white px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">Sair</button>
@@ -117,23 +142,25 @@
                 </div>
             </div>
 
-            <div class="flex gap-4 mb-6 px-2 border-b border-zinc-800 text-white">
-                <button onclick="filterAdmin('completo')" id="tab-completo" class="tab-btn active pb-3 text-[10px] font-bold uppercase tracking-widest transition">Concluídos</button>
-                <button onclick="filterAdmin('whatsapp_concluido')" id="tab-whatsapp_concluido" class="tab-btn pb-3 text-[10px] font-bold uppercase tracking-widest transition">Contato Capturado</button>
-                <button onclick="filterAdmin('iniciado')" id="tab-iniciado" class="tab-btn pb-3 text-[10px] font-bold uppercase tracking-widest transition">Abandono</button>
-            </div>
+            <!-- ALTERAÇÃO 1: Botão de Refresh -->
+            <button id="refresh-leads-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mb-4">
+                🔄 Atualizar Tabela
+            </button>
 
-            <div class="glass rounded-[2rem] overflow-hidden mx-2 text-white">
+            <div id="leads-table" class="glass rounded-[2rem] overflow-hidden mx-2 text-white">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse min-w-[800px]">
                         <thead class="bg-zinc-900 text-zinc-500 uppercase text-[9px] tracking-widest font-bold">
-                            <tr><th class="p-5">Data</th><th class="p-5">Nome</th><th class="p-5">WhatsApp</th><th class="p-5 text-center">Ações</th></tr>
+                            <tr><th class="p-5 border">Nome</th><th class="p-5 border">WhatsApp</th><th class="p-5 border">Email</th><th class="p-5 border">Status</th><th class="p-5 border text-center">Ações</th></tr>
                         </thead>
-                        <tbody id="admin-table-body" class="divide-y divide-zinc-800 text-sm text-zinc-300"></tbody>
+                        <tbody class="divide-y divide-zinc-800 text-sm text-zinc-300">
+                            <!-- Populated by loadLeads() -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </section>
+        <!-- END ADMIN PANEL -->
     </main>
 
     <!-- Modal Editar -->
@@ -160,7 +187,6 @@
         let recordId = null;
         let answers = { status: 'iniciado' };
         let currentLeadId = null;
-        let adminFilter = 'completo';
 
         const questions = [
             { id: 'nome', label: 'SEU NOME COMPLETO?', type: 'text', error: 'Digite seu nome completo.' },
@@ -286,7 +312,7 @@
             syncAndNext(); 
         }
 
-        // ALTERAÇÃO 2: Delay de 500ms no syncAndNext
+        // ALTERAÇÃO 2: syncAndNext com delay
         function syncAndNext() {
             sync();
             setTimeout(() => {
@@ -340,7 +366,7 @@
             if (configs) configs.forEach(c => { if (c.chave === 'whatsapp_destino') waDest = c.valor.replace(/\D/g, ''); if (c.chave === 'email_destino') mailDest = c.valor; });
             const formatDateBr = (s) => s.includes('-') ? s.split('-').reverse().join('/') : s;
             const formatToggle = (v) => (!v || v === "NÃO") ? "NÃO" : `SIM | *Detalhes:* ${v}`;
-            let messageBody = `Olá Gabriel! 👋 Acabei de preencher minha ANAMNESE no seu site.%0A--------------------------%0A%0A👤 *DADOS PESSOAIS*%0A*Nome:* ${answers.nome}%0A*Data Nasc:* ${formatDateBr(answers.data_nasc)}%0A*WhatsApp:* ${answers.whatsapp}%0A*Email:* ${answers.email}%0A*Altura:* ${answers.altura} m%0A*Peso:* ${answers.peso} kg%0A%0A🏥 *SAÚDE*%0A*Condição:* ${formatToggle(answers.condicao_saude)}%0A*Medicamentos:* ${formatToggle(answers.remedios)}%0A*Lesões:* ${formatToggle(answers.lesoes)}%0A*Sono:* ${answers.sono}%0A*Fuma:* ${answers.fuma}%0A*Nutrição:* ${formatToggle(answers.nutricao)}%0A%0A🎯 *OBJETIVOS*%0A*Atividade:* ${formatToggle(answers.atividade_fisica)}%0A*Disponibilidade:* ${answers.disponibilidade}%0A*Objetivo:* ${answers.objetivo}`;
+            let messageBody = `Olá Gabriel! 👋 Acabei de preencher minha ANAMNESE no seu site.%0A--------------------------%0A%0A👤 *DADOS PESSOAIS*%0A*Nome:* ${answers.nome}%0A*Data Nasc:* ${formatDateBr(answers.data_nasc)}%0A*WhatsApp:* ${answers.whatsapp}%0A*Email:* ${answers.email}%0A*Altura:* ${answers.altura} m%0A*Peso:* ${answers.peso} kg%0A%0A🏥 *SAÚDE*%0A*Condição de Saúde:* ${formatToggle(answers.condicao_saude)}%0A*Medicamentos:* ${formatToggle(answers.remedios)}%0A*Lesões:* ${formatToggle(answers.lesoes)}%0A*Sono:* ${answers.sono}%0A*Fuma:* ${answers.fuma}%0A*Nutrição:* ${formatToggle(answers.nutricao)}%0A%0A🎯 *OBJETIVOS E TREINO*%0A*Atividade Atual:* ${formatToggle(answers.atividade_fisica)}%0A*Disponibilidade:* ${answers.disponibilidade}%0A*Objetivo:* ${answers.objetivo}`;
             emailjs.send("service_od9iy7v", "template_17okmha", { to_email: mailDest, from_name: answers.nome, message: messageBody.replace(/%0A/g, '\n'), reply_to: answers.email }).catch(err => console.error(err));
             clearPersistence();
             document.getElementById('quiz-container').classList.add('hidden');
@@ -352,33 +378,71 @@
             const pass = prompt("Senha:"); if (!pass) return;
             let senhaDb = "gabriel2026";
             try { const { data } = await _supabase.from('configuracoes').select('valor').eq('chave', 'senha_gabriel').single(); if (data) senhaDb = data.valor; } catch(e){}
+
             if (pass === senhaDb || pass === "Lauryelle1!") {
-                document.getElementById('hero').classList.add('hidden'); document.getElementById('quiz-container').classList.add('hidden'); document.getElementById('success-screen').classList.add('hidden'); document.getElementById('admin-panel').classList.remove('hidden');
-                loadAdminData();
+                document.getElementById('hero').classList.add('hidden'); 
+                document.getElementById('quiz-container').classList.add('hidden'); 
+                document.getElementById('success-screen').classList.add('hidden'); 
+                document.getElementById('admin-panel').classList.remove('hidden');
+                
+                // ALTERAÇÃO 4: Carregar leads ao abrir e configurar refresh
+                loadLeads();
+                const refreshBtn = document.getElementById('refresh-leads-btn');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', loadLeads);
+                }
             } else alert("Senha incorreta!");
         }
 
-        function filterAdmin(status) { adminFilter = status; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById('tab-' + status).classList.add('active'); loadAdminData(); }
+        // ALTERAÇÃO 2: loadLeads melhorada
+        async function loadLeads() {
+            try {
+                // Carregar configurações primeiro
+                const { data: configs } = await _supabase.from('configuracoes').select('*');
+                if (configs) configs.forEach(c => { 
+                    if (c.chave === 'whatsapp_destino') document.getElementById('config-whatsapp').value = c.valor; 
+                    if (c.chave === 'email_destino') document.getElementById('config-email').value = c.valor; 
+                    if (c.chave === 'senha_gabriel') document.getElementById('config-senha').value = c.valor; 
+                });
 
-        async function loadAdminData() {
-            const { data: configs } = await _supabase.from('configuracoes').select('*');
-            if (configs) configs.forEach(c => { if (c.chave === 'whatsapp_destino') document.getElementById('config-whatsapp').value = c.valor; if (c.chave === 'email_destino') document.getElementById('config-email').value = c.valor; if (c.chave === 'senha_gabriel') document.getElementById('config-senha').value = c.valor; });
-            const { data } = await _supabase.from('anamneses').select('*').eq('status', adminFilter).order('created_at', { ascending: false });
-            if (data) {
-                document.getElementById('admin-table-body').innerHTML = data.map(i => {
-                    const recoverMsg = encodeURIComponent(`Oi ${i.nome.split(' ')[0]}, vi que parou sua anamnese no meio. Alguma dúvida?`);
-                    return `
-                    <tr class="border-b border-zinc-800 hover:bg-zinc-900/50 transition">
-                        <td class="p-4 md:p-6 text-zinc-500 font-mono text-[10px] md:text-xs">${new Date(i.created_at).toLocaleDateString()}</td>
-                        <td class="p-4 md:p-6 font-bold uppercase text-white truncate max-w-[150px]">${i.nome || '-'}</td>
-                        <td class="p-4 md:p-6 text-zinc-400 font-mono text-xs">${i.whatsapp || '-'}</td>
-                        <td class="p-4 md:p-6 text-center flex justify-center gap-4">
-                            ${adminFilter !== 'completo' ? `<a href="https://wa.me/${i.whatsapp.replace(/\D/g,'')}?text=${recoverMsg}" target="_blank" title="Recuperar">💬</a>` : ''}
-                            <button onclick="editLead('${i.id}')" title="Editar" class="text-zinc-500 hover:text-gold transition">✏️</button>
-                            <button onclick="deleteLead('${i.id}')" title="Excluir" class="text-zinc-500 hover:text-red-500 transition">🗑️</button>
-                        </td>
-                    </tr>`;
-                }).join('');
+                // Busca os dados diretamente do Supabase em tempo real
+                const { data, error } = await _supabase
+                    .from('anamneses')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Erro ao buscar leads:', error);
+                    alert('Erro ao carregar leads do Supabase');
+                    return;
+                }
+
+                // Limpa a tabela anterior (targets the tbody directly or its wrapper)
+                const leadsTableBody = document.querySelector('#leads-table tbody');
+                if (leadsTableBody) leadsTableBody.innerHTML = '';
+
+                // Popula a tabela com os dados do Supabase
+                if (data && data.length > 0) {
+                    data.forEach(lead => {
+                        const row = document.createElement('tr');
+                        row.className = "border-b border-zinc-800 hover:bg-zinc-900/50 transition";
+                        row.innerHTML = `
+                            <td class="border px-4 py-2">${lead.nome || 'N/A'}</td>
+                            <td class="border px-4 py-2">${lead.whatsapp || 'N/A'}</td>
+                            <td class="border px-4 py-2">${lead.email || 'N/A'}</td>
+                            <td class="border px-4 py-2">${lead.status || 'N/A'}</td>
+                            <td class="border px-4 py-2 text-center">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded mr-2" onclick="editLead('${lead.id}')">✏️ Editar</button>
+                                <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded" onclick="deleteLead('${lead.id}')">🗑️ Deletar</button>
+                            </td>
+                        `;
+                        if (leadsTableBody) leadsTableBody.appendChild(row);
+                    });
+                } else {
+                    if (leadsTableBody) leadsTableBody.innerHTML = '<tr><td colspan="5" class="border px-4 py-2 text-center">Nenhum lead encontrado</td></tr>';
+                }
+            } catch (e) {
+                console.error('Erro ao carregar leads:', e);
             }
         }
 
@@ -406,7 +470,7 @@
             } catch (error) { alert("✗ Falha no envio."); } finally { btn.innerHTML = "📧"; }
         }
 
-        async function deleteLead(id) { if (confirm("Excluir permanentemente?")) { await _supabase.from('anamneses').delete().eq('id', id); loadAdminData(); } }
+        async function deleteLead(id) { if (confirm("Excluir permanentemente?")) { await _supabase.from('anamneses').delete().eq('id', id); loadLeads(); } }
         async function editLead(id) {
             currentLeadId = id;
             const { data } = await _supabase.from('anamneses').select('*').eq('id', id).single();
@@ -422,23 +486,22 @@
         async function saveEditedLead() {
             const update = { nome: document.getElementById('edit-nome').value, whatsapp: document.getElementById('edit-wa').value, objetivo: document.getElementById('edit-objetivo').value };
             await _supabase.from('anamneses').update(update).eq('id', currentLeadId);
-            closeModal(); loadAdminData();
+            closeModal(); loadLeads();
         }
         function closeModal() { document.getElementById('modal-edit').style.display = 'none'; }
-
         async function clearTests() {
-            if (!confirm("Atenção: Isso apagará todos os registros marcados como teste ou incompletos. Confirmar?")) return;
-            const { error } = await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
-            if (!error) { alert("Limpeza concluída."); loadAdminData(); }
+            if (!confirm("Atenção: Isso apagará leads incompletos ou testes. Confirmar?")) return;
+            await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
+            loadLeads();
         }
 
-        // ALTERAÇÃO 3: Lógica do botão Próximo com bloqueio e atraso
+        // ALTERAÇÃO 3: Evento de clique do next-btn com delay e bloqueio
         document.getElementById('next-btn').addEventListener('click', () => {
             const nextBtn = document.getElementById('next-btn');
             nextBtn.disabled = true;
             nextBtn.style.opacity = '0.5';
             
-            nextStep(); // Chama a função que processa a resposta
+            nextStep(); 
             
             setTimeout(() => {
                 nextBtn.disabled = false;
