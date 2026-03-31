@@ -142,19 +142,25 @@
                 </div>
             </div>
 
-            <!-- ALTERAÇÃO 1: Botão de Refresh -->
+            <!-- ALTERAÇÃO 1: Botão Refresh e Tabela Responsiva -->
             <button id="refresh-leads-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mb-4">
                 🔄 Atualizar Tabela
             </button>
 
-            <div id="leads-table" class="glass rounded-[2rem] overflow-hidden mx-2 text-white">
+            <div id="leads-table-container" class="glass rounded-[2rem] overflow-hidden mx-2 text-white">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[800px]">
-                        <thead class="bg-zinc-900 text-zinc-500 uppercase text-[9px] tracking-widest font-bold">
-                            <tr><th class="p-5 border">Nome</th><th class="p-5 border">WhatsApp</th><th class="p-5 border">Email</th><th class="p-5 border">Status</th><th class="p-5 border text-center">Ações</th></tr>
+                    <table class="w-full border-collapse text-sm md:text-base">
+                        <thead>
+                            <tr class="bg-blue-600 text-white">
+                                <th class="border border-gray-300 px-2 md:px-4 py-2 text-left">Nome</th>
+                                <th class="border border-gray-300 px-2 md:px-4 py-2 text-left hidden sm:table-cell">WhatsApp</th>
+                                <th class="border border-gray-300 px-2 md:px-4 py-2 text-left hidden md:table-cell">Email</th>
+                                <th class="border border-gray-300 px-2 md:px-4 py-2 text-left">Status</th>
+                                <th class="border border-gray-300 px-2 md:px-4 py-2 text-center">Ações</th>
+                            </tr>
                         </thead>
-                        <tbody class="divide-y divide-zinc-800 text-sm text-zinc-300">
-                            <!-- Populated by loadLeads() -->
+                        <tbody id="leads-table">
+                            <!-- Os dados serão preenchidos aqui pela função loadLeads() -->
                         </tbody>
                     </table>
                 </div>
@@ -203,7 +209,7 @@
             { id: 'nutricao', label: 'TEM ACOMPANHAMENTO NUTRICIONAL OU SEGUE PLANO?', type: 'toggle', placeholder: 'Descreva seu plano...', error: 'Informe sobre sua nutrição.' },
             { id: 'atividade_fisica', label: 'PRATICA ATIVIDADE FÍSICA REGULARMENTE?', type: 'toggle', placeholder: 'Há quanto tempo?', error: 'Responda esta etapa.' },
             { id: 'disponibilidade', label: 'DISPONIBILIDADE PARA TREINAR?', sublabel: '(Dias possíveis independente de personal)', type: 'options', options: ["Todos os dias", "6x na semana", "5x na semana", "4x na semana", "3x na semana", "2x na semana", "1x na semana"], error: 'Selecione sua disponibilidade.' },
-            { id: 'objetivo', label: 'QUAL SEU PRINCIPAL OBJETIVO?', type: 'textarea', error: 'Informe seu objetivo.' },
+            { id: 'objetivo', label: 'QUAL SEU PRINCIPAL OBJETIVO COM TREINAMENTO?', type: 'textarea', error: 'Informe seu objetivo.' },
             { id: 'visao_6meses', label: 'COMO SE IMAGINA EM 6 MESES?', type: 'textarea', error: 'Descreva sua meta física.' },
             { id: 'atividade_favorita', label: 'QUAL ATIVIDADE VOCÊ MAIS GOSTA?', type: 'textarea', error: 'Conte-me sua preferida.' }
         ];
@@ -268,7 +274,7 @@
             let value = el.value; let start = el.selectionStart;
             let digitsBeforeCursor = value.slice(0, start).replace(/\D/g, '').length;
             if (maskType === 'phone') {
-                let clean = value.replace(/\D/g, '').slice(0, 11);
+                let clean = val.replace(/\D/g, '').slice(0, 11);
                 let fmt = ""; if (clean.length > 0) { fmt = "(" + clean.slice(0, 2); if (clean.length > 2) fmt += ") " + clean.slice(2, 7); if (clean.length > 7) fmt += "-" + clean.slice(7, 11); }
                 el.value = fmt;
             } else if (maskType === 'date_br') {
@@ -312,7 +318,7 @@
             syncAndNext(); 
         }
 
-        // ALTERAÇÃO 2: syncAndNext com delay
+        // ALTERAÇÃO 2 (TURN 12): syncAndNext com delay
         function syncAndNext() {
             sync();
             setTimeout(() => {
@@ -385,7 +391,7 @@
                 document.getElementById('success-screen').classList.add('hidden'); 
                 document.getElementById('admin-panel').classList.remove('hidden');
                 
-                // ALTERAÇÃO 4: Carregar leads ao abrir e configurar refresh
+                // ALTERAÇÃO 4 (TURN 12): Carregar leads e configurar refresh
                 loadLeads();
                 const refreshBtn = document.getElementById('refresh-leads-btn');
                 if (refreshBtn) {
@@ -394,10 +400,10 @@
             } else alert("Senha incorreta!");
         }
 
-        // ALTERAÇÃO 2: loadLeads melhorada
+        // ALTERAÇÃO 2 (TURN 13): loadLeads melhorada e responsiva
         async function loadLeads() {
             try {
-                // Carregar configurações primeiro
+                // Carregar configurações do Admin
                 const { data: configs } = await _supabase.from('configuracoes').select('*');
                 if (configs) configs.forEach(c => { 
                     if (c.chave === 'whatsapp_destino') document.getElementById('config-whatsapp').value = c.valor; 
@@ -405,7 +411,6 @@
                     if (c.chave === 'senha_gabriel') document.getElementById('config-senha').value = c.valor; 
                 });
 
-                // Busca os dados diretamente do Supabase em tempo real
                 const { data, error } = await _supabase
                     .from('anamneses')
                     .select('*')
@@ -417,32 +422,71 @@
                     return;
                 }
 
-                // Limpa a tabela anterior (targets the tbody directly or its wrapper)
-                const leadsTableBody = document.querySelector('#leads-table tbody');
-                if (leadsTableBody) leadsTableBody.innerHTML = '';
+                const leadsTableBody = document.querySelector('#leads-table');
+                if (!leadsTableBody) return;
+                
+                leadsTableBody.innerHTML = '';
 
-                // Popula a tabela com os dados do Supabase
                 if (data && data.length > 0) {
                     data.forEach(lead => {
                         const row = document.createElement('tr');
-                        row.className = "border-b border-zinc-800 hover:bg-zinc-900/50 transition";
+                        row.className = 'border-b hover:bg-gray-100 transition text-zinc-300';
+                        
+                        // Extrai o primeiro nome
+                        const primeiroNome = lead.nome ? lead.nome.split(' ')[0] : 'Cliente';
+                        
+                        // WhatsApp personalizado
+                        const mensagemWhatsApp = `${primeiroNome}, tudo bem? Aqui é o Gabriel Carvalho. Vi que você começou a preencher o formulário lá no meu site, mas não finalizou. Deu algum erro na página por aí ou ficou alguma dúvida?`;
+                        const whatsappLink = `https://wa.me/${lead.whatsapp.replace(/\D/g, '' )}?text=${encodeURIComponent(mensagemWhatsApp)}`;
+                        
                         row.innerHTML = `
-                            <td class="border px-4 py-2">${lead.nome || 'N/A'}</td>
-                            <td class="border px-4 py-2">${lead.whatsapp || 'N/A'}</td>
-                            <td class="border px-4 py-2">${lead.email || 'N/A'}</td>
-                            <td class="border px-4 py-2">${lead.status || 'N/A'}</td>
-                            <td class="border px-4 py-2 text-center">
-                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded mr-2" onclick="editLead('${lead.id}')">✏️ Editar</button>
-                                <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded" onclick="deleteLead('${lead.id}')">🗑️ Deletar</button>
+                            <td class="border border-gray-300 px-2 md:px-4 py-2 font-semibold text-white">${lead.nome || 'N/A'}</td>
+                            <td class="border border-gray-300 px-2 md:px-4 py-2 hidden sm:table-cell font-mono">${lead.whatsapp || 'N/A'}</td>
+                            <td class="border border-gray-300 px-2 md:px-4 py-2 hidden md:table-cell text-xs md:text-sm">${lead.email || 'N/A'}</td>
+                            <td class="border border-gray-300 px-2 md:px-4 py-2">
+                                <span class="bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-[10px] font-bold uppercase">${lead.status || 'N/A'}</span>
+                            </td>
+                            <td class="border border-gray-300 px-2 md:px-4 py-2">
+                                <div class="flex flex-col gap-1 md:flex-row md:gap-2 justify-center">
+                                    <a href="${whatsappLink}" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[10px] font-bold text-center transition">💬 WhatsApp</a>
+                                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold transition" onclick="editLead('${lead.id}')">✏️ Editar</button>
+                                    <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-[10px] font-bold transition" onclick="confirmDeleteLead('${lead.id}')">🗑️ Deletar</button>
+                                </div>
                             </td>
                         `;
-                        if (leadsTableBody) leadsTableBody.appendChild(row);
+                        leadsTableBody.appendChild(row);
                     });
                 } else {
-                    if (leadsTableBody) leadsTableBody.innerHTML = '<tr><td colspan="5" class="border px-4 py-2 text-center">Nenhum lead encontrado</td></tr>';
+                    leadsTableBody.innerHTML = '<tr><td colspan="5" class="border border-gray-300 px-4 py-4 text-center text-gray-500">Nenhum lead encontrado</td></tr>';
                 }
             } catch (e) {
                 console.error('Erro ao carregar leads:', e);
+            }
+        }
+
+        // ALTERAÇÃO 3 (TURN 13): confirmDeleteLead
+        async function confirmDeleteLead(leadId) {
+            if (!confirm('Tem certeza que deseja deletar este lead?')) {
+                return;
+            }
+
+            try {
+                const { error } = await _supabase
+                    .from('anamneses')
+                    .delete()
+                    .eq('id', leadId);
+
+                if (error) {
+                    console.error('Erro ao deletar lead:', error);
+                    alert('Erro ao deletar lead: ' + error.message);
+                    return;
+                }
+
+                alert('Lead deletado com sucesso!');
+                loadLeads(); // Recarrega a tabela após deletar
+            } catch (e) {
+                console.error('Erro ao deletar lead:', e);
+                alert('Erro ao deletar lead');
             }
         }
 
@@ -470,7 +514,6 @@
             } catch (error) { alert("✗ Falha no envio."); } finally { btn.innerHTML = "📧"; }
         }
 
-        async function deleteLead(id) { if (confirm("Excluir permanentemente?")) { await _supabase.from('anamneses').delete().eq('id', id); loadLeads(); } }
         async function editLead(id) {
             currentLeadId = id;
             const { data } = await _supabase.from('anamneses').select('*').eq('id', id).single();
@@ -489,13 +532,14 @@
             closeModal(); loadLeads();
         }
         function closeModal() { document.getElementById('modal-edit').style.display = 'none'; }
+        
         async function clearTests() {
-            if (!confirm("Atenção: Isso apagará leads incompletos ou testes. Confirmar?")) return;
-            await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
-            loadLeads();
+            if (!confirm("Atenção: Isso apagará todos os registros marcados como teste ou incompletos. Confirmar?")) return;
+            const { error } = await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
+            if (!error) { alert("Limpeza concluída."); loadLeads(); }
         }
 
-        // ALTERAÇÃO 3: Evento de clique do next-btn com delay e bloqueio
+        // TURN 12: Bloqueio do botão Próximo
         document.getElementById('next-btn').addEventListener('click', () => {
             const nextBtn = document.getElementById('next-btn');
             nextBtn.disabled = true;
