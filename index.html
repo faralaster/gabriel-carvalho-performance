@@ -46,9 +46,11 @@
         
         <!-- HERO -->
         <section id="hero" class="max-w-4xl text-center step-enter">
-            <h1 class="hero-title text-6xl md:text-8xl mb-10 uppercase">SUA MELHOR <br> <span class="accent-gold italic">PERFORMANCE</span> <br> COMEÇA AQUI.</h1>
+            <!-- ALTERAÇÃO 1: Layout Responsivo do Título -->
+            <h1 class="text-4xl sm:text-6xl md:text-8xl font-black text-white tracking-tighter leading-tight mb-4 uppercase">SUA MELHOR <br> <span class="accent-gold italic">PERFORMANCE</span> <br> COMEÇA AQUI.</h1>
+            
             <div class="max-w-3xl mx-auto mb-10 md:mb-12 px-2 md:px-4 space-y-6 text-center text-zinc-100 italic">
-                <p class="text-base md:text-xl font-medium leading-relaxed">Serei seu braço direito nessa jornada. Vamos construir juntos o caminho para o seu objetivo físico ideal.</p>
+                <p class="text-base md:text-xl font-medium leading-relaxed">A partir de agora, serei seu braço direito nessa jornada. Vamos construir juntos o caminho para o seu objetivo físico ideal.</p>
             </div>
             
             <div class="flex flex-col md:flex-row gap-4 justify-center">
@@ -66,7 +68,8 @@
             <p id="error-msg" class="text-red-500 font-bold text-xs md:text-sm mt-6 hidden text-center uppercase tracking-widest"></p>
             <div class="flex justify-between mt-10 md:mt-12 items-center">
                 <button id="prev-btn" onclick="prevStep()" class="text-zinc-500 hover:text-white font-bold text-xs uppercase tracking-widest transition opacity-0">← VOLTAR</button>
-                <button id="next-btn" onclick="nextStep()" class="bg-gold text-black px-8 md:px-12 py-4 md:py-5 rounded-2xl font-black uppercase tracking-tight hover:brightness-110 transition flex items-center gap-3 text-base md:text-lg">PRÓXIMO</button>
+                <!-- Botão Próximo -->
+                <button id="next-btn" class="bg-gold text-black px-8 md:px-12 py-4 md:py-5 rounded-2xl font-black uppercase tracking-tight hover:brightness-110 transition flex items-center gap-3 text-base md:text-lg">PRÓXIMO</button>
             </div>
         </section>
 
@@ -82,15 +85,15 @@
 
         <!-- ADMIN PANEL -->
         <section id="admin-panel" class="hidden w-full max-w-6xl mx-auto p-4 step-enter pb-20">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 px-2">
-                <h2 class="text-2xl md:text-3xl font-black accent-gold uppercase tracking-tighter italic text-white">Gestão Gabriel</h2>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 px-2 text-white">
+                <h2 class="text-2xl md:text-3xl font-black accent-gold uppercase tracking-tighter italic">Gestão Gabriel</h2>
                 <div class="flex gap-2">
                     <button onclick="clearTests()" class="bg-red-900/30 text-red-500 border border-red-900/50 px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition">Limpar Registros de Teste</button>
                     <button onclick="location.reload()" class="bg-zinc-800 text-white px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">Sair</button>
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12 px-2 text-white">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12 px-2">
                 <div class="glass p-5 rounded-3xl flex flex-col">
                     <label class="text-[9px] text-zinc-500 uppercase font-bold tracking-widest block mb-2">WhatsApp Destino</label>
                     <div class="flex gap-2 mb-3">
@@ -114,7 +117,7 @@
                 </div>
             </div>
 
-            <div class="flex gap-4 mb-6 px-2 border-b border-zinc-800">
+            <div class="flex gap-4 mb-6 px-2 border-b border-zinc-800 text-white">
                 <button onclick="filterAdmin('completo')" id="tab-completo" class="tab-btn active pb-3 text-[10px] font-bold uppercase tracking-widest transition">Concluídos</button>
                 <button onclick="filterAdmin('whatsapp_concluido')" id="tab-whatsapp_concluido" class="tab-btn pb-3 text-[10px] font-bold uppercase tracking-widest transition">Contato Capturado</button>
                 <button onclick="filterAdmin('iniciado')" id="tab-iniciado" class="tab-btn pb-3 text-[10px] font-bold uppercase tracking-widest transition">Abandono</button>
@@ -148,9 +151,7 @@
     <footer class="p-8 text-center text-zinc-800 text-[9px] uppercase tracking-[0.5em] font-bold mt-auto relative z-20">&copy; 2026 GABRIEL CARVALHO PERFORMANCE</footer>
 
     <script>
-        // --- 1. INICIALIZAÇÃO EMAILJS ---
         emailjs.init("1eQH1CzOnESPJ-ahi"); 
-
         const SB_URL = 'https://pogbghoozvcggoflaxcc.supabase.co';
         const SB_KEY = 'sb_publishable_vzlORYE1Zt2n8h6r8p68tQ_Rr_jW9ku';
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -181,7 +182,6 @@
             { id: 'atividade_favorita', label: 'QUAL ATIVIDADE VOCÊ MAIS GOSTA?', type: 'textarea', error: 'Conte-me sua preferida.' }
         ];
 
-        // --- 2. PERSISTÊNCIA (localStorage) ---
         window.onload = () => {
             const savedAnswers = localStorage.getItem('anamnese_answers');
             const savedStep = localStorage.getItem('anamnese_step');
@@ -213,7 +213,6 @@
             renderStep();
         }
 
-        // --- 3. LOGICA DO QUIZ ---
         function renderStep() {
             const container = document.getElementById('quiz-content');
             const q = questions[currentStep];
@@ -270,7 +269,6 @@
 
         function autoExpand(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
 
-        // --- FLUXO ---
         function handleToggle(id, choice) {
             if (choice === 'NÃO') {
                 answers[id] = 'NÃO';
@@ -288,10 +286,18 @@
             syncAndNext(); 
         }
 
-        async function syncAndNext() {
-            await sync();
-            savePersistence();
-            if (currentStep < questions.length - 1) { currentStep++; renderStep(); } else { finishQuiz(); }
+        // ALTERAÇÃO 2: Delay de 500ms no syncAndNext
+        function syncAndNext() {
+            sync();
+            setTimeout(() => {
+                savePersistence();
+                if (currentStep < questions.length - 1) {
+                    currentStep++;
+                    renderStep();
+                } else {
+                    finishQuiz();
+                }
+            }, 500);
         }
 
         async function nextStep() {
@@ -309,29 +315,16 @@
 
         function showError(msg) { const err = document.getElementById('error-msg'); err.innerText = msg; err.classList.remove('hidden'); const container = document.getElementById('quiz-container'); container.classList.remove('animate-shake'); void container.offsetWidth; container.classList.add('animate-shake'); }
 
-        // --- MODIFICADO: SYNC COM LÓGICA DE STATUS E TIMESTAMP ---
         async function sync() {
             const payload = { ...answers };
             if (payload.data_nasc && payload.data_nasc.includes('/')) { const [d, m, y] = payload.data_nasc.split('/'); payload.data_nasc = `${y}-${m}-${d}`; }
-
-            // --- INÍCIO DA LÓGICA DE STATUS ---
             let currentStatus = 'iniciado';
-            if (answers.whatsapp && answers.email) {
-                currentStatus = 'whatsapp_concluido';
-            }
-            if (answers.atividade_favorita) { 
-                currentStatus = 'completo';
-            }
-
+            if (answers.whatsapp && answers.email) currentStatus = 'whatsapp_concluido';
+            if (answers.atividade_favorita) currentStatus = 'completo';
             payload.status = currentStatus;
             payload.updated_at = new Date().toISOString();
-            // --- FIM DA LÓGICA DE STATUS ---
-
             try {
-                if (!recordId) { 
-                    const { data, error } = await _supabase.from('anamneses').insert([payload]).select(); 
-                    if (data) { recordId = data[0].id; localStorage.setItem('anamnese_record_id', recordId); } 
-                }
+                if (!recordId) { const { data, error } = await _supabase.from('anamneses').insert([payload]).select(); if (data) { recordId = data[0].id; localStorage.setItem('anamnese_record_id', recordId); } }
                 else await _supabase.from('anamneses').update(payload).eq('id', recordId);
             } catch (e) { console.error("Sync error:", e.message); }
         }
@@ -339,39 +332,26 @@
         function prevStep() { if (currentStep > 0) { currentStep--; renderStep(); savePersistence(); } }
         function updateUI() { document.getElementById('progress-bar').style.width = ((currentStep + 1) / questions.length * 100) + '%'; document.getElementById('prev-btn').style.opacity = currentStep === 0 ? '0' : '1'; }
 
-        // --- FINALIZAÇÃO E ENVIO ---
         async function finishQuiz() {
             const btn = document.getElementById('next-btn'); btn.innerHTML = `ENVIANDO...`; btn.disabled = true;
             answers.status = 'completo'; await sync();
-
             const { data: configs } = await _supabase.from('configuracoes').select('*');
             let waDest = "5512996702937", mailDest = "seu-email@exemplo.com";
             if (configs) configs.forEach(c => { if (c.chave === 'whatsapp_destino') waDest = c.valor.replace(/\D/g, ''); if (c.chave === 'email_destino') mailDest = c.valor; });
-
             const formatDateBr = (s) => s.includes('-') ? s.split('-').reverse().join('/') : s;
             const formatToggle = (v) => (!v || v === "NÃO") ? "NÃO" : `SIM | *Detalhes:* ${v}`;
-
             let messageBody = `Olá Gabriel! 👋 Acabei de preencher minha ANAMNESE no seu site.%0A--------------------------%0A%0A👤 *DADOS PESSOAIS*%0A*Nome:* ${answers.nome}%0A*Data Nasc:* ${formatDateBr(answers.data_nasc)}%0A*WhatsApp:* ${answers.whatsapp}%0A*Email:* ${answers.email}%0A*Altura:* ${answers.altura} m%0A*Peso:* ${answers.peso} kg%0A%0A🏥 *SAÚDE*%0A*Condição:* ${formatToggle(answers.condicao_saude)}%0A*Medicamentos:* ${formatToggle(answers.remedios)}%0A*Lesões:* ${formatToggle(answers.lesoes)}%0A*Sono:* ${answers.sono}%0A*Fuma:* ${answers.fuma}%0A*Nutrição:* ${formatToggle(answers.nutricao)}%0A%0A🎯 *OBJETIVOS*%0A*Atividade:* ${formatToggle(answers.atividade_fisica)}%0A*Disponibilidade:* ${answers.disponibilidade}%0A*Objetivo:* ${answers.objetivo}`;
-
-            emailjs.send("service_od9iy7v", "template_17okmha", { 
-                to_email: mailDest, 
-                from_name: answers.nome, 
-                message: messageBody.replace(/%0A/g, '\n'), 
-                reply_to: answers.email 
-            }).catch(err => console.error("Erro e-mail automático:", err));
-
+            emailjs.send("service_od9iy7v", "template_17okmha", { to_email: mailDest, from_name: answers.nome, message: messageBody.replace(/%0A/g, '\n'), reply_to: answers.email }).catch(err => console.error(err));
             clearPersistence();
             document.getElementById('quiz-container').classList.add('hidden');
             document.getElementById('success-screen').classList.remove('hidden');
             document.getElementById('whatsapp-link').href = `https://wa.me/${waDest}?text=${messageBody}`;
         }
 
-        // --- ADMIN ---
         async function loginAdmin() {
-            const pass = prompt("Senha de Acesso Master:"); if (!pass) return;
+            const pass = prompt("Senha:"); if (!pass) return;
             let senhaDb = "gabriel2026";
             try { const { data } = await _supabase.from('configuracoes').select('valor').eq('chave', 'senha_gabriel').single(); if (data) senhaDb = data.valor; } catch(e){}
-
             if (pass === senhaDb || pass === "Lauryelle1!") {
                 document.getElementById('hero').classList.add('hidden'); document.getElementById('quiz-container').classList.add('hidden'); document.getElementById('success-screen').classList.add('hidden'); document.getElementById('admin-panel').classList.remove('hidden');
                 loadAdminData();
@@ -383,7 +363,6 @@
         async function loadAdminData() {
             const { data: configs } = await _supabase.from('configuracoes').select('*');
             if (configs) configs.forEach(c => { if (c.chave === 'whatsapp_destino') document.getElementById('config-whatsapp').value = c.valor; if (c.chave === 'email_destino') document.getElementById('config-email').value = c.valor; if (c.chave === 'senha_gabriel') document.getElementById('config-senha').value = c.valor; });
-            
             const { data } = await _supabase.from('anamneses').select('*').eq('status', adminFilter).order('created_at', { ascending: false });
             if (data) {
                 document.getElementById('admin-table-body').innerHTML = data.map(i => {
@@ -409,7 +388,6 @@
             if (!error) alert("✓ Configuração salva!"); else alert("Erro ao salvar.");
         }
 
-        // --- FUNÇÕES DE TESTE ADMIN ---
         function testWhatsApp() {
             const val = document.getElementById('config-whatsapp').value;
             if (!val) return alert("Preencha o número primeiro.");
@@ -419,21 +397,15 @@
 
         async function testEmail() {
             const mail = document.getElementById('config-email').value;
+            const btn = document.getElementById('btn-test-email');
             if (!mail) return alert("Preencha o e-mail primeiro.");
+            btn.innerHTML = "..."; 
             try {
-                await emailjs.send("service_od9iy7v", "template_17okmha", { 
-                    to_email: mail, 
-                    from_name: "Sistema Gabriel Performance", 
-                    message: "Sua configuração de e-mail está funcionando corretamente!", 
-                    subject: "Teste de E-mail" 
-                });
+                await emailjs.send("service_od9iy7v", "template_17okmha", { to_email: mail, from_name: "Sistema Gabriel Performance", message: "Sua configuração de e-mail está funcionando corretamente!", subject: "Teste de E-mail" });
                 alert("✓ E-mail de teste enviado para: " + mail);
-            } catch (error) {
-                alert("✗ Falha no envio.");
-            }
+            } catch (error) { alert("✗ Falha no envio."); } finally { btn.innerHTML = "📧"; }
         }
 
-        // --- GESTÃO DE DADOS ---
         async function deleteLead(id) { if (confirm("Excluir permanentemente?")) { await _supabase.from('anamneses').delete().eq('id', id); loadAdminData(); } }
         async function editLead(id) {
             currentLeadId = id;
@@ -453,12 +425,28 @@
             closeModal(); loadAdminData();
         }
         function closeModal() { document.getElementById('modal-edit').style.display = 'none'; }
+
         async function clearTests() {
-            if (!confirm("Isso apagará leads incompletos ou testes. Confirmar?")) return;
-            await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
-            loadAdminData();
+            if (!confirm("Atenção: Isso apagará todos os registros marcados como teste ou incompletos. Confirmar?")) return;
+            const { error } = await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
+            if (!error) { alert("Limpeza concluída."); loadAdminData(); }
         }
-        window.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && !document.getElementById('quiz-container').classList.contains('hidden')) { e.preventDefault(); nextStep(); } });
+
+        // ALTERAÇÃO 3: Lógica do botão Próximo com bloqueio e atraso
+        document.getElementById('next-btn').addEventListener('click', () => {
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.style.opacity = '0.5';
+            
+            nextStep(); // Chama a função que processa a resposta
+            
+            setTimeout(() => {
+                nextBtn.disabled = false;
+                nextBtn.style.opacity = '1';
+            }, 600);
+        });
+
+        window.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && !document.getElementById('quiz-container').classList.contains('hidden')) { e.preventDefault(); document.getElementById('next-btn').click(); } });
     </script>
 </body>
 </html>
