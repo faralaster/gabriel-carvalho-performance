@@ -68,7 +68,7 @@
 
     <nav class="p-6 flex justify-between items-center max-w-6xl mx-auto w-full relative z-20">
         <div class="text-2xl font-black tracking-tighter uppercase italic text-white">GABRIEL<span class="accent-gold font-light">CARVALHO</span></div>
-        <button onclick="loginAdmin()" class="text-zinc-800 hover:text-zinc-600 transition text-[10px] uppercase tracking-[0.3em] font-bold">Admin</button>
+        <button onclick="loginAdmin()" class="text-zinc-800 hover:text-zinc-500 transition text-[10px] uppercase tracking-[0.3em] font-bold">Admin</button>
     </nav>
 
     <main class="flex-grow flex items-center justify-center p-4 relative z-10 text-white">
@@ -142,7 +142,6 @@
                 </div>
             </div>
 
-            <!-- ALTERAÇÃO 1: Botão Refresh e Tabela Responsiva -->
             <button id="refresh-leads-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mb-4">
                 🔄 Atualizar Tabela
             </button>
@@ -160,16 +159,14 @@
                             </tr>
                         </thead>
                         <tbody id="leads-table">
-                            <!-- Os dados serão preenchidos aqui pela função loadLeads() -->
+                            <!-- Populated by loadLeads() -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
-        <!-- END ADMIN PANEL -->
     </main>
 
-    <!-- Modal Editar -->
     <div id="modal-edit" class="modal-backdrop">
         <div class="modal-content text-white">
             <h3 class="text-2xl font-black accent-gold uppercase mb-6 italic text-center">Ajustar Registro</h3>
@@ -274,7 +271,7 @@
             let value = el.value; let start = el.selectionStart;
             let digitsBeforeCursor = value.slice(0, start).replace(/\D/g, '').length;
             if (maskType === 'phone') {
-                let clean = val.replace(/\D/g, '').slice(0, 11);
+                let clean = value.replace(/\D/g, '').slice(0, 11);
                 let fmt = ""; if (clean.length > 0) { fmt = "(" + clean.slice(0, 2); if (clean.length > 2) fmt += ") " + clean.slice(2, 7); if (clean.length > 7) fmt += "-" + clean.slice(7, 11); }
                 el.value = fmt;
             } else if (maskType === 'date_br') {
@@ -318,7 +315,6 @@
             syncAndNext(); 
         }
 
-        // ALTERAÇÃO 2 (TURN 12): syncAndNext com delay
         function syncAndNext() {
             sync();
             setTimeout(() => {
@@ -347,17 +343,36 @@
 
         function showError(msg) { const err = document.getElementById('error-msg'); err.innerText = msg; err.classList.remove('hidden'); const container = document.getElementById('quiz-container'); container.classList.remove('animate-shake'); void container.offsetWidth; container.classList.add('animate-shake'); }
 
+        // ALTERAÇÃO SOLICITADA: Função sync() que evita registros vazios
         async function sync() {
+            const temDadosPreenchidos = Object.values(answers).some(value => value && value !== '' && value !== '0,0');
+            
+            if (!temDadosPreenchidos) {
+                console.warn("Nenhum dado preenchido. Registro não será criado.");
+                return;
+            }
+
             const payload = { ...answers };
-            if (payload.data_nasc && payload.data_nasc.includes('/')) { const [d, m, y] = payload.data_nasc.split('/'); payload.data_nasc = `${y}-${m}-${d}`; }
+            if (payload.data_nasc && payload.data_nasc.includes('/')) { 
+                const [d, m, y] = payload.data_nasc.split('/'); 
+                payload.data_nasc = `${y}-${m}-${d}`; 
+            }
+            
             let currentStatus = 'iniciado';
             if (answers.whatsapp && answers.email) currentStatus = 'whatsapp_concluido';
             if (answers.atividade_favorita) currentStatus = 'completo';
             payload.status = currentStatus;
             payload.updated_at = new Date().toISOString();
+
             try {
-                if (!recordId) { const { data, error } = await _supabase.from('anamneses').insert([payload]).select(); if (data) { recordId = data[0].id; localStorage.setItem('anamnese_record_id', recordId); } }
-                else await _supabase.from('anamneses').update(payload).eq('id', recordId);
+                if (!recordId) { 
+                    const { data, error } = await _supabase.from('anamneses').insert([payload]).select(); 
+                    if (data) { recordId = data[0].id; localStorage.setItem('anamnese_record_id', recordId); } 
+                    if (error) console.error("Erro ao criar registro:", error);
+                } else { 
+                    const { error } = await _supabase.from('anamneses').update(payload).eq('id', recordId);
+                    if (error) console.error("Erro ao atualizar registro:", error);
+                }
             } catch (e) { console.error("Sync error:", e.message); }
         }
 
@@ -391,7 +406,6 @@
                 document.getElementById('success-screen').classList.add('hidden'); 
                 document.getElementById('admin-panel').classList.remove('hidden');
                 
-                // ALTERAÇÃO 4 (TURN 12): Carregar leads e configurar refresh
                 loadLeads();
                 const refreshBtn = document.getElementById('refresh-leads-btn');
                 if (refreshBtn) {
@@ -400,10 +414,9 @@
             } else alert("Senha incorreta!");
         }
 
-        // ALTERAÇÃO 2 (TURN 13): loadLeads melhorada e responsiva
+        // ALTERAÇÕES SOLICITADAS: Painel Admin, Refresh e Deletar
         async function loadLeads() {
             try {
-                // Carregar configurações do Admin
                 const { data: configs } = await _supabase.from('configuracoes').select('*');
                 if (configs) configs.forEach(c => { 
                     if (c.chave === 'whatsapp_destino') document.getElementById('config-whatsapp').value = c.valor; 
@@ -432,12 +445,9 @@
                         const row = document.createElement('tr');
                         row.className = 'border-b hover:bg-gray-100 transition text-zinc-300';
                         
-                        // Extrai o primeiro nome
                         const primeiroNome = lead.nome ? lead.nome.split(' ')[0] : 'Cliente';
-                        
-                        // WhatsApp personalizado
                         const mensagemWhatsApp = `${primeiroNome}, tudo bem? Aqui é o Gabriel Carvalho. Vi que você começou a preencher o formulário lá no meu site, mas não finalizou. Deu algum erro na página por aí ou ficou alguma dúvida?`;
-                        const whatsappLink = `https://wa.me/${lead.whatsapp.replace(/\D/g, '' )}?text=${encodeURIComponent(mensagemWhatsApp)}`;
+                        const whatsappLink = `https://wa.me/${lead.whatsapp ? lead.whatsapp.replace(/\D/g, '' ) : ''}?text=${encodeURIComponent(mensagemWhatsApp)}`;
                         
                         row.innerHTML = `
                             <td class="border border-gray-300 px-2 md:px-4 py-2 font-semibold text-white">${lead.nome || 'N/A'}</td>
@@ -459,35 +469,17 @@
                 } else {
                     leadsTableBody.innerHTML = '<tr><td colspan="5" class="border border-gray-300 px-4 py-4 text-center text-gray-500">Nenhum lead encontrado</td></tr>';
                 }
-            } catch (e) {
-                console.error('Erro ao carregar leads:', e);
-            }
+            } catch (e) { console.error('Erro ao carregar leads:', e); }
         }
 
-        // ALTERAÇÃO 3 (TURN 13): confirmDeleteLead
         async function confirmDeleteLead(leadId) {
-            if (!confirm('Tem certeza que deseja deletar este lead?')) {
-                return;
-            }
-
+            if (!confirm('Tem certeza que deseja deletar este lead?')) return;
             try {
-                const { error } = await _supabase
-                    .from('anamneses')
-                    .delete()
-                    .eq('id', leadId);
-
-                if (error) {
-                    console.error('Erro ao deletar lead:', error);
-                    alert('Erro ao deletar lead: ' + error.message);
-                    return;
-                }
-
+                const { error } = await _supabase.from('anamneses').delete().eq('id', leadId);
+                if (error) { alert('Erro ao deletar lead: ' + error.message); return; }
                 alert('Lead deletado com sucesso!');
-                loadLeads(); // Recarrega a tabela após deletar
-            } catch (e) {
-                console.error('Erro ao deletar lead:', e);
-                alert('Erro ao deletar lead');
-            }
+                loadLeads();
+            } catch (e) { console.error('Erro ao deletar lead:', e); }
         }
 
         async function updateConfig(chave, inputId) {
@@ -534,19 +526,16 @@
         function closeModal() { document.getElementById('modal-edit').style.display = 'none'; }
         
         async function clearTests() {
-            if (!confirm("Atenção: Isso apagará todos os registros marcados como teste ou incompletos. Confirmar?")) return;
-            const { error } = await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
-            if (!error) { alert("Limpeza concluída."); loadLeads(); }
+            if (!confirm("Atenção: Isso apagará leads incompletos ou testes. Confirmar?")) return;
+            await _supabase.from('anamneses').delete().or('status.eq.iniciado,email.eq.caio.mizaelmartins@gmail.com');
+            loadLeads();
         }
 
-        // TURN 12: Bloqueio do botão Próximo
         document.getElementById('next-btn').addEventListener('click', () => {
             const nextBtn = document.getElementById('next-btn');
             nextBtn.disabled = true;
             nextBtn.style.opacity = '0.5';
-            
             nextStep(); 
-            
             setTimeout(() => {
                 nextBtn.disabled = false;
                 nextBtn.style.opacity = '1';
